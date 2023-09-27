@@ -1,0 +1,3853 @@
+﻿@page
+@model IndexModel
+@{
+	ViewData["Title"] = "Home page";
+}
+<script src="~/js/jexcel.js" asp-append-version="true"></script>
+    <script src="~/js/jsuites.js" asp-append-version="true"></script>
+    <script src="~/js/jquery-3.4.1.js" asp-append-version="true"></script>
+    <script src="~/js/lodash.min.js" asp-append-version="true"></script>
+
+    <link rel="stylesheet" href="~/css/jsuites.css" type="text/css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/jexcel.css" type="text/css" asp-append-version="true"/>
+	<link rel="stylesheet" href="~/css/kendo.custom.css" type="text/css" asp-append-version="true"/>
+	<link rel="stylesheet" href="~/css/font-awesome.min.css" asp-append-version="true" />
+	
+     <style>
+        body {
+            font-family: "Helvetica Neue",Helvetica,Arial,sans-serif !important;
+            font-size: 14px !important;
+        }
+		.ms-webpartPage-root {
+				 border-spacing: 0px !important;
+			}
+        table, input, select {
+            font-family: "Helvetica Neue",Helvetica,Arial,sans-serif !important;
+            font-size: 14px !important;
+          /*  border-spacing: 0px !important;*/
+            margin-left: 0px !important;
+            color: #00435e !important;
+        }
+
+            select, input[type="text"] {
+                padding: 8px;
+                width: 350px;
+                border: 1px solid grey !important;
+            }
+
+            table tr td {
+                border-width: 1px;
+            }
+
+            input[type=button] {
+                /*background-color: #f0f0f0 !important;*/
+                background-image: none, linear-gradient(to bottom, rgba(255, 255, 255, 0.45) 0px, rgba(255, 255, 255, 0) 100%);
+                background-position: 50% 50%;
+                background-color: #f2f2f2 !important;
+                color: #00435e !important;
+                border: 1px solid grey !important;
+                cursor: pointer;
+                border-radius: 2px;
+                text-align: center;
+                padding: 8px;
+                margin-bottom: 5px;
+                font-size: 15px !important;
+            }
+        /*#budgetForecast {
+         max-width: 1420px;
+         overflow-x: auto;
+         }*/
+        .forecast {
+            background-color: #fee48e;
+        }
+
+        .prev-next {
+            margin-top: 4px;
+			background-color: rgb(1, 89, 145) !important;
+			color: #fff !important;
+			
+        }
+
+        .curr-year {
+            display: inline-block;
+            text-align: center;
+        }
+
+            .curr-year span {
+                /*background-color: #f0f0f0 !important;*/
+                background-image: none, linear-gradient(to bottom, rgba(255, 255, 255, 0.45) 0px, rgba(255, 255, 255, 0) 100%);
+                background-position: 50% 50%;
+                background-color: #f2f2f2 !important;
+                color: #00435e !important;
+                border: 1px solid grey !important;
+                border-radius: 2px;
+                text-align: center;
+                padding: 8px;
+                font-size: 14px !important;
+                width: 6em;
+                display: inline-block;
+				
+            }
+
+        .jexcel td {
+            /*border-color: #000 !important;*/
+            border-color: grey !important;
+            color: rgb(0, 0, 0);
+			font-family: Verdana,Arial,sans-serif;
+			font-size: 13px;
+        }
+
+       .jexcel > tbody > tr > td.readonly {
+            /*border-color: #000 !important;*/
+            border-color: grey !important;
+			/*background-color : #f5feff !important;*/
+            color: #606060;
+			font-family: Verdana,Arial,sans-serif;
+			font-size: 13px;
+        }
+
+
+
+        .jexcel > thead > tr > td {
+            /*background-color: #eeeeee !important*/
+            background-image: none, linear-gradient(to bottom, rgba(255, 255, 255, 0.45) 0px, rgba(255, 255, 255, 0) 100%);
+            background-position: 50% 50%;
+            background-color: white !important;
+           
+			color: #7e7979 !important;
+            border-width: 1px;
+            word-break: break-word !important;
+			white-space: normal!important;
+            text-align: center !important;
+            height: 40px;
+			font-family: Verdana,Arial,sans-serif;
+			/*font-weight: bold;*/
+			font-weight: bold;
+			font-size: 13px;
+			z-index: 0;
+        }
+
+        .jexcel > tbody > tr > td {
+			/*border-top: 0px solid transparent;*/
+			
+            height: 30px;
+        }
+
+            .jexcel > tbody > tr > td[data-x="2"], .jexcel > tbody > tr > td[data-x="3"] {
+                /*background-color: rgb(216, 216, 216);
+                background-color: lightgrey;
+               font-weight: 600;*/
+            }
+
+        .disabled {
+            background-color: rgba(211, 211, 211, 0.36);
+            /*background-color: rgba(211, 211, 211, 0.36);
+            font-weight: 600;
+			font-weight: bold;*/
+        }
+
+        .bold {
+            /*font-weight: 600;*/
+        }
+
+        .no-js #loader {
+            display: none;
+        }
+
+        .js #loader {
+            display: block;
+            position: absolute;
+            left: 100px;
+            top: 100px;
+        }
+
+        .se-pre-con {
+            background-color: transparent;
+            width: 294px;
+            height: 194px;
+            position: absolute;
+            left: calc(50% - 97px);
+            top: 100px;
+            display: none;
+            z-index: 20001;
+        }
+
+        #spanCostGridMessage, #spanImportMessages, #spanInsertCatMessages {
+            color: red;
+        }
+		#spanCostGridError{
+			color: red;
+			display: none;
+		}
+        .ms-ar-text {
+            color: #00435e;
+            font-size: 36px;
+            font-family: "Helvetica Neue",Helvetica,Arial,sans-serif !important;
+        }
+
+
+        .message {
+            color: red;
+        }
+		table.jexcel_hidden_index{
+			/*width: auto !important;*/
+    overflow: auto;
+		}
+		
+    </style>
+    <style>
+        /* The Modal (background) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 2001; /* Sit on top */
+            padding-top: 100px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        .modal-header {
+            /*background-color: rgb(216, 216, 216);*/
+            background-image: none, linear-gradient(to bottom, rgba(255, 255, 255, 0.45) 0px, rgba(255, 255, 255, 0) 100%);
+            background-position: 50% 50%;
+            background-color: #d9ecf5 !important;
+            color: #00435e !important;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #bbdceb;
+            width: 40%;
+            border-bottom-width: 0px;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        /* Modal Content */
+        .modal-content {
+            background-color:#fff;
+            color: #00435e !important;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #bbdceb;
+            width: 40%;
+        }
+
+        /* The Close Button */
+        .close {
+            color: #00435e;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+            .close:hover,
+            .close:focus {
+                color: #000;
+                text-decoration: none;
+                cursor: pointer;
+            }
+			
+			.btnc{
+			background-color: #f3f3f4 !important;
+				color: #515967 !important;
+				border: 1px #f2f2f2 !important;
+			}
+			.btncH{
+			background-color: #f3f3f4 !important;				
+				border: 1px #f3f3f4 !important;
+			}
+			.hideL {font-weight: bold;}
+			
+			
+			.NumcheckFY {
+				color: black !important;
+				background: rgb(247 247 150) !important;
+			}
+			.jexcel_content{width:100% !important;}
+    </style>
+
+
+    <!-- The Modal -->
+    <div id="categoryModal" class="modal">
+       <div class="modal-header btncH"  style='padding-top: 5px; padding-bottom: 5px;'>
+            Add New Category
+            <span id="btnCategoryClose" style='margin-top: -6px;' class="close">&times;</span>
+        </div>
+        <!-- Modal content -->
+        <div class="modal-content">
+            <table>
+                <tr>
+                    <td style="width:25%">Category Name </td>
+                    <td style="width:75%">
+                        <input type="text" id="txtCategory" />
+                    </td>
+                </tr>				
+                <tr>
+                    <td style="width:25%"></td>
+                    <td style="width:75%"><span id="spanInsertCatMessages"></span></td>
+                </tr>
+                <tr>
+                    <td style="width:25%"></td>
+                    <td style="width:75%"><input type="button" id="btnAddCategory" style="float: right;" class="prev-next next" value="Save" /></td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+	<div id="editcategoryModal" class="modal">
+        <div class="modal-header btncH"  style='padding-top: 5px; padding-bottom: 5px;'>
+            Manage Categories
+            <span id="btnEditCategoryClose" style='margin-top: -6px;' class="close">&times;</span>
+        </div>
+        <!-- Modal content -->
+        <div class="modal-content"  >
+		
+		<div class="modal-body">
+		<div id="spreadsheetCate"></div>
+		
+		
+            <table style="width: 100%; display:none;">
+                <tr>
+                    <td style="width:25%">Category Name </td>
+                    <td style="width:75%">
+                        <select id="ddlEditCategories" onchange="GetSelectedTextValue(this)" class='readcheck' style='height: 33px;padding: 3px;'>
+							<option value="0">Select Categories</option>
+						</select>
+                    </td>
+                </tr>
+				<tr>
+					<td style="width:25%">Changes Name </td>
+                    <td style="width:75%">
+                        <input type="text" id="txtEditCategory" style='width: 285px;' />
+                    </td>
+                </tr>
+				<tr>
+					<td style="width:25%"><span style='margin-top: 25px;'>In-Active </span> </td>
+                    <td style="width:75%">
+                        <input type="checkbox" id="EditActiveCheck" >
+                    </td>
+                </tr>
+				
+                <tr>
+                    <td style="width:25%"></td>
+                    <td style="width:75%"><span id="spanInsertCatMessagesU"></span></td>
+                </tr>
+                <tr>
+                    <td style="width:25%"></td>
+                    <td style="width:75%"><input type="button" id="btnUpdateCategory" style='float: right;' class="prev-next next" value="Update" /></td>
+                </tr>
+				
+            </table> 
+			</div>
+			 <div class="modal-footer" style='margin: 25px;'>				
+				<input type="button" id="btnnultiCategory" onclick='renameoractiveCat();' style='min-width:0px; float: right;padding: 4px 11px; margin-top: -17px;' class="prev-next next" value="Save" />
+			  </div>
+        </div>
+
+    </div>
+	
+    <div id="importModal" class="modal">
+        <div class="modal-header">
+            Import Cost Data
+            <span id="btnImportClose" class="close">&times;</span>
+        </div>
+        <!-- Modal content -->
+        <div class="modal-content">
+            <table style="width:100%">
+                <tr>
+                    <td style="width:25%">Download Template</td>
+                    <td style="width:75%"><input type="button" id="btnDownloadImportTemplate" class="prev-next next" value="Download" /></td>
+                </tr>
+                <tr>
+                    <td style="width:25%">Upload Template</td>
+                    <td style="width:75%">
+                        <input type="file" id="fileUploadTemplate" onchange="onfileUpload()">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:25%"></td>
+                    <td style="width:75%">
+                        <span id="spanImportMessages"></span>
+                    </td>
+                <tr>
+                    <td style="width:25%"></td>
+                    <td style="width:75%">
+                        <input type="button" id="btnUploadTemplate" class="prev-next next" value="Upload Data" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+    <div id="loader" class="se-pre-con">
+        <img alt="1" src="https://projectmadeeasy.sharepoint.com/sites/Development/Site%20Assets/PMECostGrid/download.gif" width="32" height="32">
+        <span class="ms-ar-text">Please wait.</span>
+    </div>
+    <table id='showBtn' style="width:100%; margin-top: 0px;" cellpadding="0" cellspacing="0">
+        <tr>
+            <td style="text-align:left;">
+            <!--    <input type="button" id="btnSave" class="prev-next" value="Save" /> -->
+			
+
+
+            <!--   <input type="button" id="btnCategory" class="prev-next" value="Add New Category" /> -->
+				<input id="btnCategory" type="button" class="prev-next btnc hidelabel" style="" value="Add Category">
+				<input id="btnEditCategory" type="button" class="prev-next  hidelabel readcheck btnc" value="Manage Categories">
+				
+            <!--    <input type="button" id="btnPrevious" class="prev-next prev" value="<<" /> -->
+                <div class="curr-year" align="center">
+                    <span id="divYear">2020</span>
+                </div>
+			<!--	<input type="button" id="btnNext" class="prev-next next" value=">>" /> -->
+                <select id="ddlCategories" onchange='checkgriddata()'class='hidelabel' style='height: 33px;padding: 3px;'>
+                    <option value="0">Loading Categories...</option>
+                </select>
+            <!--   <input type="button" id="btnInsertCategory" class="prev-next" value="+ Insert" />&nbsp;&nbsp; -->
+				<input id="btnInsertCategory" type="button" class="prev-next hidelabel" style="background-color: #015991 !important;color: #fff !important;" value="+ Insert">
+				 &nbsp;&nbsp;&nbsp;&nbsp;
+				<!--<label id='hideForecast' style ="font-family: Helvetica Neue,Helvetica,Arial,sans-serif !important; font-size: 15px !important;">Hide Budget<label/> 
+				<input type="checkbox" id="forecastCheck" name="Hide Budget" style= "height:35px;width:18px;"/> -->
+			<!--
+				<input type="checkbox" id="forecastCheck" onclick='forecast1Checkclick()' name="Hide Variance" style= "height:35px;width:18px;"/>
+				<label id='hide1forecast' style ="font-family: Helvetica Neue,Helvetica,Arial,sans-serif !important; font-size: 15px !important;"> Forecast</label> 
+				<input type="checkbox" id="ActualCheck" onclick='ActualCheckclick()' name="Hide Variance" style= "height:35px;width:18px;"/>
+				<label id='hideActual' style ="font-family: Helvetica Neue,Helvetica,Arial,sans-serif !important; font-size: 15px !important;"> Actual</label> 
+				<input type="checkbox" id="VarianceCheck" onclick='VarianceCheckclick()' name="Hide Variance" style= "height:35px;width:18px;"/>
+				<label id='hideVariance' style ="font-family: Helvetica Neue,Helvetica,Arial,sans-serif !important; font-size: 15px !important;"> Variance</label> --> 
+            </td>
+        </tr>
+        <tr>
+            <td align="left">
+            <!--    <input type="button" id="btnImport" class="prev-next" value="Import Cost Data" /> -->
+				
+            <!--    <input type="button" id="btnExport" class="prev-next " value="Export" /> -->
+			<!--<input id="btnImport" type="button" class="prev-next btnc" style="" value="Import">
+				<input id="btnExport" type="button" class="prev-next btnc" style="" value="Export"> -->
+					<input id="btnSave" type="button"  class="prev-next" style="background-color: #015991 !important;color: #fff !important;" value="Save">
+					<input id="btnBaseSnapSave" type="button" onclick='SBDataclick()' class="prev-next hidebtns" style="background-color: #015991 !important;color: #fff !important;" value="Baseline / Snapshot">
+					<!--	<label id='hideL'  class='hideL hidebaseline'style ="font-family: Helvetica Neue,Helvetica,Arial,sans-serif !important; font-size: 15px !important;">   Show:</label> 
+				
+				<input type="checkbox" class='hidebaseline' id="forecastCheck" onclick="hiderowJexcelcheck()" name="Hide Variance" style= "height:35px;width:18px;"/>
+				<label id='hideBudget'  class='hidebaseline' style ="font-family: Helvetica Neue,Helvetica,Arial,sans-serif !important; font-size: 15px !important;"> Baseline</label> 
+				
+				<input type="checkbox" class='hidebaseline' id="QuarterCheck" onclick='hideQbaseline()' name="Hide Quarter " style= "height:35px;width:18px;"/>
+				<label id='hidequaters'  class='hidebaseline' style ="font-family: Helvetica Neue,Helvetica,Arial,sans-serif !important; font-size: 15px !important;"> Quarter</label> -->
+				<br>
+					
+                <span id="spanCostGridMessage"></span><span id="spanCostGridError">You have entered more than one period ('.').</span>
+            </td>
+        </tr>
+        <tr>
+            <td align="left">
+                <div id="CostGrid">				
+                    <div id="spreadsheetCostGrid"></div>
+					<div style='padding-right: 7px !important; text-align: right;' title='The version number will be shown in the format as: current year.current month.deployment number.'>2022.07.1</div>
+                </div>
+            </td>
+        </tr>
+    </table>
+	
+	 <table id='MainBtn'  style="width:100%;" cellpadding="0" cellspacing="0">
+	   <tr class="">
+            <td align="left">
+                <div id="welcostGrid">
+                   <span style="font-size: 30px;font-weight: bold;">Let's get started!</span>
+				   <p>Use the buttons below to create a cost grid for this project.Choose the Project Level option to manage your total baseline and forecast by month/quarter.Choose the Category Level to drill down into your total project baseline and forecast and manage costs at a more granular level (i.e,.cost category).</p>
+                </div>
+            </td>
+        </tr>
+        <tr class="">
+            <td align="left">
+                <div id="CostGrid" style='text-align: center;'>
+                    <input id="btnProjectLevel" type="button" onclick="Projectlrow()"  style='width: 16%;'class="prev-next btnc" value="Project Level">
+					<input id="btnCategoryLevel" type="button" onclick="Categoriesrow()" style='width: 16%;' class="prev-next btnc" value="Category Level">
+                </div>
+            </td>
+        </tr>
+    </table>
+	
+	<table id='Welcomepage'  style="width:100%;" cellpadding="0" cellspacing="0">
+        <tr class="">
+            <td align="left">
+                <div id="welcostGrid">
+                   <span style="font-size: 30px;font-weight: bold;">Welcome</span>
+				   <p>The Project Cost Grid is used to manage project costs. Cost details are captured either at the project level or it can be detailed further into cost categories. To begin, click the Projects tab and edit the project.</p>
+                </div>
+            </td>
+        </tr>
+    </table>
+	
+	
+
+
+
+    <script>
+	
+	var sscount =0;	
+	var TotalHeader = 0
+$(document).bind('mousemove',function(e){	
+	if(sscount==0)
+	{
+		 if($('a[aria-describedby="Ribbon.Tabs.PDP.Home.Project.Edit_ToolTip"]').length==1){
+		sscount=1;
+		$('a[aria-describedby="Ribbon.Tabs.PDP.Home.Project.Save_ToolTip"]').bind("click", function(){
+			
+				$("#btnSave").click()
+				//databtnSave()
+          })
+		 
+		  
+		
+	}
+	/* $('a[href^="unsafe:"]').each(function(){ 
+            var oldUrl = $(this).attr("href"); // Get current url
+            var newUrl = oldUrl.replace("unsafe:", ""); // Create new url
+            $(this).attr("href", newUrl); // Set herf value
+        });*/
+	}
+});
+	    var CostJExcelData = [];
+		var ggriddatachngae =false
+		function checkgriddata(){
+			if(ggriddatachngae){
+				$("#spanCostGridMessage").html("The Cost Grid contains unsaved data.  Are you sure you want to leave this page?");
+				$("#spanCostGridMessage").css('color','red')
+				ggriddatachngae = false;
+			}
+			//alert('')
+		}
+		
+		function Projectlrow(){
+				$("#showBtn").show();
+				$("#MainBtn").hide();
+				$('.hidelabel').hide();				
+				var year = parseInt($("#divYear").html());
+					var CData = [];
+				//for (var i = 0; i < allTypes.length; i++) {
+					/*CostGridData.push({
+						AddedBy: username,
+						Added_On: new Date(),
+						Category: 'Project Level',
+						Category_UID: 39,
+						ID: 9,
+						ModifiedBy: username,
+						Modified_On: new Date(),
+						MonthYear: new Date(year, 0, 1),
+						Project_UID: projectID,
+						Type: allTypes[i]["Type"],
+						Type_UID: parseInt( allTypes[i]["Type_UID"]),
+						Value: null,
+					});*/
+					
+					CData.push({
+                            AddedBy: username,
+                            Category_UID: "39",
+                            projectId: projectID,
+                        });
+				//}
+				//$(".hidebaseline").show();
+                   // loadData(year, CostGridData);
+				   
+				   if(CData.length != 0){
+								var CDatal = CData.length;
+								 for (var i = 0; i < CData.length; i++) {
+									 var Gman = i+1
+										$.ajax({
+											url: apiBaseUrl+"AddCategoryToProjectv2",
+											dataType: 'json',
+											type: 'post',
+											contentType: 'application/json',
+											data: JSON.stringify(CData[i]),
+											processData: false,
+											success: function (resp) { // information for year ' + year + '.' information for year ' + year + '.
+												if(CDatal == Gman){
+												var msg = resp ? 'Successfully saved data' : ''
+												if(resp){
+													$("#spanCostGridMessage").css('color','#015991')
+												}
+												$("#spanCostGridMessage").html(msg);
+												/*setTimeout(function () {
+													$("#spanCostGridMessage").html('');
+													loadCostGrid(year);
+												}, 2000);*/
+												window.setTimeout(function () {
+													$("#spanCostGridMessage").html('');
+													if(nextYer){
+														nextYer = false;
+														Nyear = parseInt($("#divYear").html()) + 1;
+														loadCostGrid(Nyear);
+													}
+													else if(PYer){
+														PYer = false;
+														Pyear = parseInt($("#divYear").html()) - 1;
+														loadCostGrid(Pyear);
+													}
+													else{
+															 loadCostGrid(year);
+													}
+												   
+												}, 2000);
+												}
+											},
+											error: function (jqXhr, textStatus, errorThrown) {
+												$("#spanCostGridMessage").html('Failed saving');
+												$("#spanCostGridMessage").css('color','red')
+												/*setTimeout(function () {
+													$("#spanCostGridMessage").html('');
+												}, 2000);*/
+												window.setTimeout(function () {
+													$("#spanCostGridMessage").html('');
+												}, 2000);
+												console.log(errorThrown);
+											}
+										});
+						}
+					
+					}
+              
+		}
+		function Categoriesrow(){
+			$("#showBtn").show();
+			$("#MainBtn").hide();
+			if(userInGroup){$('.hidelabel').show();}
+			
+			if(CostGridData.length == 0){
+				$('.hidebtns').hide()
+				$('.hidebaseline').hide()
+				
+			}
+			
+		}
+        $(document).ready(function () {
+			$('.modal-content table').width($('.modal-content').width()-2);
+	$('#txtCategory').width($(".modal-content").width()-79);
+	$(".jexcel_content table.jexcel ").width($(".jexcel_content").width()-20);
+			$(window).resize(function(){
+    //$("span").text(x += 1);
+	//$(".jexcel_hidden_index").width($(".jexcel_content").width()-2);
+	$('.modal-content table').width($('.modal-content').width()-2);
+	$('#txtCategory').width($(".modal-content").width()-79);
+	$(".jexcel_content table.jexcel ").width($(".jexcel_content").width()-20);
+  });
+			$("#divYear").hide();
+			$("#showBtn").hide();
+			$("#MainBtn").hide();
+			$("#Welcomepage").hide();
+			
+			//ready()
+		/*	if(new Date().getMonth() >8){
+				currentYear = currentYear+1
+			}
+			
+			 loadCostGrid(currentYear);*/
+			if(location.hostname=="projectmadeeasy.sharepoint.com"){
+			 ExecuteOrDelayUntilScriptLoaded(IsCurrentUserMemberOfGroup, "sp.js");	
+			}else{
+			loadCostGrid(currentYear);	
+			} 
+			
+			});
+			
+			
+			var userInGroup = false;
+			var userInGroupP = false;
+			var userInGroupPM = false;
+function IsCurrentUserMemberOfGroup() {
+	var mygroup = "Cost Grid Administrators"; //"Web Administrators (Project Web App Synchronized)";//"Cost Grid Administrators"; //"Cost Grid Administratros";//
+	var currentContext = new SP.ClientContext.get_current();
+
+	var currentWeb = currentContext.get_web();
+
+	var currentUser = currentContext.get_web().get_currentUser();
+
+	currentContext.load(currentUser);
+
+	var allGroups = currentWeb.get_siteGroups();
+
+	currentContext.load(allGroups);
+
+	var group = allGroups.getByName(mygroup);
+
+	currentContext.load(group);
+
+	var groupUsers = group.get_users();
+
+	currentContext.load(groupUsers);
+
+	currentContext.executeQueryAsync(OnSuccess, OnFailure);
+
+	function OnSuccess(sender, args) {
+
+		var groupUserEnumerator = groupUsers.getEnumerator();
+
+		while (groupUserEnumerator.moveNext()) {
+
+			var groupUser = groupUserEnumerator.get_current();
+
+			if (groupUser.get_id() == currentUser.get_id()) {
+
+				userInGroup = true;
+
+				break;
+
+			}
+
+		}
+
+		if (userInGroup) {
+		//	userInGroup = false;
+			if(new Date().getMonth() >8){
+			//	currentYear = currentYear+1
+			}
+			 loadCostGrid(currentYear);
+		} else {
+			userInGroup = false;
+			$("#btnCategory").hide();
+			$("#btnEditCategory").hide();
+			if(new Date().getMonth() >8){
+				//currentYear = currentYear+1
+			}			
+			// loadCostGrid(currentYear);
+			IsCurrentUserMemberOfGroupP()
+		}
+
+	}
+	function OnFailure(sender, args) {
+		userInGroup = false;
+		$("#btnCategory").hide();
+			$("#btnEditCategory").hide();
+			if(new Date().getMonth() >8){
+				//currentYear = currentYear+1
+			}	
+		// loadCostGrid(currentYear);
+			IsCurrentUserMemberOfGroupP()
+
+	}
+
+}
+
+function IsCurrentUserMemberOfGroupP() {
+	var mygroup = "Development Visitors"; //"Web Administrators (Project Web App Synchronized)";//"Cost Grid Administrators"; //"Cost Grid Administratros";//
+	var currentContext = new SP.ClientContext.get_current();
+
+	var currentWeb = currentContext.get_web();
+
+	var currentUser = currentContext.get_web().get_currentUser();
+
+	currentContext.load(currentUser);
+
+	var allGroups = currentWeb.get_siteGroups();
+
+	currentContext.load(allGroups);
+
+	var group = allGroups.getByName(mygroup);
+
+	currentContext.load(group);
+
+	var groupUsers = group.get_users();
+
+	currentContext.load(groupUsers);
+
+	currentContext.executeQueryAsync(OnSuccess, OnFailure);
+
+	function OnSuccess(sender, args) {
+
+		var groupUserEnumerator = groupUsers.getEnumerator();
+
+		while (groupUserEnumerator.moveNext()) {
+
+			var groupUser = groupUserEnumerator.get_current();
+
+			if (groupUser.get_id() == currentUser.get_id()) {
+
+				userInGroupP = true;
+
+				break;
+
+			}
+
+		}
+
+		if (userInGroupP) {		
+			 loadCostGrid(currentYear);
+		} else {
+			userInGroupP = false;					
+			 //loadCostGrid(currentYear);
+			 IsCurrentUserMemberOfGroupPM()
+		}
+
+	}
+	function OnFailure(sender, args) {
+		userInGroupP = false;		
+		// loadCostGrid(currentYear);
+		IsCurrentUserMemberOfGroupPM()
+
+	}
+
+}
+			
+
+function IsCurrentUserMemberOfGroupPM() {
+	var mygroup = "Web Administrators (Project Web App Synchronized)"; //"Web Administrators (Project Web App Synchronized)";//"Cost Grid Administrators"; //"Cost Grid Administratros";//
+	var currentContext = new SP.ClientContext.get_current();
+
+	var currentWeb = currentContext.get_web();
+
+	var currentUser = currentContext.get_web().get_currentUser();
+
+	currentContext.load(currentUser);
+
+	var allGroups = currentWeb.get_siteGroups();
+
+	currentContext.load(allGroups);
+
+	var group = allGroups.getByName(mygroup);
+
+	currentContext.load(group);
+
+	var groupUsers = group.get_users();
+
+	currentContext.load(groupUsers);
+
+	currentContext.executeQueryAsync(OnSuccess, OnFailure);
+
+	function OnSuccess(sender, args) {
+
+		var groupUserEnumerator = groupUsers.getEnumerator();
+
+		while (groupUserEnumerator.moveNext()) {
+
+			var groupUser = groupUserEnumerator.get_current();
+
+			if (groupUser.get_id() == currentUser.get_id()) {
+
+				userInGroupPM = true;
+
+				break;
+
+			}
+
+		}
+
+		if (userInGroupPM) {		
+			 loadCostGrid(currentYear);
+		} else {
+			userInGroupPM = false;					
+			 loadCostGrid(currentYear);
+		}
+
+	}
+	function OnFailure(sender, args) {
+		userInGroupPM = false;		
+		 loadCostGrid(currentYear);
+
+	}
+
+}		
+			
+			
+			
+			//function ready(){
+				 
+
+            var $loading = $('#loader').hide();
+			if(location.hostname=="projectmadeeasy.sharepoint.com"){
+            var projectID = getParameterByName('projuid');
+			var username = _spPageContextInfo.userDisplayName;
+			}else{
+			var projectID = 'dabc99c5-1746-ed11-be1e-00155da45649';	
+			var username = 'Meghna';
+			}
+          //  var apiBaseUrl="https://appcgdev.azurewebsites.net/api/";
+		   // var apiBaseUrl2="https://appcgdev.azurewebsites.net/api/";
+			
+			var apiBaseUrl="https://appcgdev.azurewebsites.net/api/";
+		    var apiBaseUrl2="https://appcgdev.azurewebsites.net/api/";
+            
+            var CostGridData = [];
+        
+            var jExcelCostGrid = {};
+            var allTypes = [{
+                'Type_UID': '1',
+                'Type': 'Budget'
+            },
+            {
+                'Type_UID': '2',
+                'Type': 'Forecast'
+            },
+            {
+                'Type_UID': '3',
+                'Type': 'Actual'
+            },
+
+            ];
+            var selCategories = [];
+            var categories = [];
+            var currentYear = new Date().getFullYear();
+            //loadCategories();
+            //onfileUpload();
+            $(document)
+                .ajaxStart(function () {
+                    $loading.show();
+                })
+                .ajaxStop(function () {
+                    $loading.hide();
+                });
+
+           
+
+
+            $("#btnAddCategory").click(function () {
+				
+				
+				 $("#spanInsertCatMessages").html('');
+				 if ($("#txtCategory").val().trim() == "") {
+					  $("#spanInsertCatMessages").html('Please enter category name.');
+					 return;
+				 }
+
+                if ($("#txtCategory").val().trim() != "") {
+                    $.ajax({
+                        url: apiBaseUrl+"AddCategory",
+                        dataType: 'json',
+                        type: 'post',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ "Category": $("#txtCategory").val(), "AddedBy": username }),
+                        processData: false,
+                        success: function (resp) {
+                            var msg = resp != '' ? 'Successfully added category.' : 'This category name is already used.  Please enter a unique name.';
+							if(resp){
+								$("#spanCostGridMessage").css('color','#015991')
+							}
+                            if (resp) {
+                                categories = [];
+                                loadCategories();
+                            }
+                            $("#spanInsertCatMessages").html(msg);
+							if(msg != 'This category name is already used.  Please enter a unique name.'){
+								 $("#spanInsertCatMessages").css('color','#015991');
+								}
+                               
+                            /*setTimeout(function () {
+                                $("#spanInsertCatMessages").html('');
+                                $("#txtCategory").val('');
+                            }, 2000);*/
+							window.setTimeout(function () {
+								if(msg != 'This category name is already used.  Please enter a unique name.'){
+								$('#btnCategoryClose').click();
+								}
+                                $("#spanInsertCatMessages").html('');
+                                $("#txtCategory").val('');
+								
+                            }, 2000);
+
+                        },
+                        error: function (jqXhr, textStatus, errorThrown) {
+                            $("#spanInsertCatMessages").html('Failed adding category.');
+							$("#spanCostGridMessage").css('color','red')
+                            /*setTimeout(function () {
+                                $("#spanInsertCatMessages").html('');
+                                $("#txtCategory").val('');
+                            }, 2000);*/
+							window.setTimeout(function () {
+                                $("#spanInsertCatMessages").html('');
+                                $("#txtCategory").val('');
+                            }, 2000);
+                            console.log(errorThrown);
+                        }
+                    });
+                }
+            });
+
+            $("#btnInsertCategory").click(function () {
+                var catId = $("#ddlCategories").val();
+                if (selCategories.filter(function (c) { return c.Category_UID == catId }).length > 0) {
+                    $("#spanInsertCatMessages").html('Selected Category already present');
+                }
+                else if (catId > 0) {
+                    var year = parseInt($("#divYear").html());
+					var CData = []
+                   // for (var i = 0; i < allTypes.length; i++) {
+                       /* CostGridData.push({
+                            AddedBy: username,
+                            Added_On: new Date(),
+                            Category: $("#ddlCategories option:selected").text(),
+                            Category_UID: catId,
+                            ID: 9,
+                            ModifiedBy: username,
+                            Modified_On: new Date(),
+                            MonthYear: new Date(year, 0, 1),
+                            Project_UID: projectID,
+                            Type: allTypes[i]["Type"],
+                            Type_UID: parseInt( allTypes[i]["Type_UID"]),
+                            Value: null,
+                        });*/
+						
+						CData.push({
+                            AddedBy: username,
+                            Category_UID: catId,
+                            projectId: projectID,
+                        });
+                  //  }
+					
+					if(CData.length != 0){
+						var CDatal = CData.length;
+						 for (var i = 0; i < CData.length; i++) {
+							 var Gman = i+1
+								$.ajax({
+									url: apiBaseUrl+"AddCategoryToProjectv2",
+									dataType: 'json',
+									type: 'post',
+									contentType: 'application/json',
+									data: JSON.stringify(CData[i]),
+									processData: false,
+									success: function (resp) { // information for year ' + year + '.' information for year ' + year + '.
+										if(CDatal == Gman){
+										var msg = resp ? 'Successfully saved data' : ''
+										if(resp){
+											$("#spanCostGridMessage").css('color','#015991')
+										}
+										$("#spanCostGridMessage").html(msg);
+										/*setTimeout(function () {
+											$("#spanCostGridMessage").html('');
+											loadCostGrid(year);
+										}, 2000);*/
+											$('.hidebtns').show()
+										window.setTimeout(function () {
+											$("#spanCostGridMessage").html('');
+											if(nextYer){
+												nextYer = false;
+												Nyear = parseInt($("#divYear").html()) + 1;
+												loadCostGrid(Nyear);
+											}
+											else if(PYer){
+												PYer = false;
+												Pyear = parseInt($("#divYear").html()) - 1;
+												loadCostGrid(Pyear);
+											}
+											else{
+													 loadCostGrid(year);
+											}
+										   
+										}, 2000);
+										}
+									},
+									error: function (jqXhr, textStatus, errorThrown) {
+										$("#spanCostGridMessage").html('Failed saving');
+										$("#spanCostGridMessage").css('color','red')
+										/*setTimeout(function () {
+											$("#spanCostGridMessage").html('');
+										}, 2000);*/
+										window.setTimeout(function () {
+											$("#spanCostGridMessage").html('');
+										}, 2000);
+										console.log(errorThrown);
+									}
+								});
+				}
+					
+					}
+                   // loadData(year, CostGridData);
+                }
+            });
+
+
+            $("#btnCategoryClose").click(function () {
+                $("#txtCategory").val('');
+                $("#categoryModal").hide();
+				
+            });
+
+            $("#btnCategory").click(function () {
+                $("#spanInsertCatMessages").html('');
+                $("#txtCategory").val('');
+                $("#categoryModal").show();
+				$('.modal-content table').width($('.modal-content').width()-2);
+				$('#txtCategory').width($(".modal-content").width()-79);
+            });
+			
+			
+			var ExitCate = []
+			 $("#btnEditCategory").click(function () {
+				//$(".jexcel_content").width("100%");
+				
+				 MGridcheckNewchanges = false;
+				 $( "#spreadsheetCate" ).css( "width", "100%" );
+				 $( ".jexcel_content" ).css( "width", "100%" );
+				 $(".jexcel_content table.jexcel ").width($(".jexcel_content").width()-20);
+				 //$('.jexcel_content').attr('width', '100% !important');
+				 //$( "#mainContainer" ).css( "maxWidth", ( $( window ).width() * 0.7 | 0 ) + "px" );
+					//$("#spanInsertCatMessages").html('');
+					//$("#txtEditCategory").val('');
+					
+					//$('#ddlEditCategories').val('0')
+					//$('#spanInsertCatMessagesU').html('')
+					
+					
+					
+					
+					
+					//$('#ddlEditCategories').append($('<option></option>').val('0').html('Select Category'));
+					//document.getElementById("EditActiveCheck").checked = false;
+					var data = [];
+					$.each(categories, function (indx, cat) {	
+					if(cat.Category != 'Project Level'){
+								var active = cat.Active == true ?false:true;
+										data.push([cat.Category,'',active,cat.Category_UID])
+										ExitCate.push(cat.Category);
+					}
+								});
+					
+					
+						 
+						$("#spreadsheetCate").html('');
+					jExcelCostGridCateg = jexcel(document.getElementById('spreadsheetCate'), {
+						tableWidth: "auto",
+							data:data,
+							defaultColWidth: 100,
+							tableOverflow:true,
+							columns: [
+								{
+									type: 'text',
+									title:'Category Name',
+									//width:200,
+									readOnly:true,
+								},
+								{
+									type: 'text',
+									title:'New Category Name',
+									//width:300
+								},
+								{
+									type: 'checkbox',
+									title:'Active',
+									//width:100
+								},
+								{
+									type: 'text',
+									title:'UID',
+									//width:100
+								},
+							 ],
+							  updateTable: function (el, cell, x, y, source, value, id) {										
+											if(x<2){
+												$(cell).css('text-align', 'left'); 
+											}
+									},
+							onchange: function (instance, cell, col, row, val, label, cellName) {
+								cellchange.push(row)
+								if (cellchangeRow.indexOf(($(cell).closest('tr').find('td').eq(0).text() - 1)) == -1) {
+									if (($(cell).closest('tr').find('td').eq(0).text() - 1) >= 0) {
+									cellchangeRow.push($(cell).closest('tr').find('td').eq(0).text() - 1)
+									}
+								}
+								//$('table.jexcel_hidden_index').attr('width', 'auto !important');
+							},
+									
+						});
+					jExcelCostGridCateg.hideIndex(0);
+					jExcelCostGridCateg.hideColumn(3)
+					
+					$('#spreadsheetCate').find('table').find('tbody').find('tr').each(function (index) {
+						
+						$(this).find('td').eq(1).css('white-space', 'normal');
+						//white-space: normal;
+					});
+					//$('#spreadsheetCate').find('table').find('thead').find('tr').find('td').addClass("Hcolor");
+					//$('#spreadsheetCate').find('table').find('thead').find('tr').find('td').css('background-color', 'green important');
+					$("#editcategoryModal").show();
+					  $('input[name=c2]').change(function(e) {
+						  if(this.checked){
+							alert('Reactivating a category will allow users to insert this category into the Costs grid going forward. Press OK to proceed.')
+						}else{
+							alert('Retiring a category will prevent users from inserting this category into the Costs grid going forward.  It will not affect projects that have already inserted this category.  Press OK to proceed.')
+						}
+						  
+						  MGridcheckNewchanges = true 
+						  
+						  });
+						  $(".jexcel_hidden_index").width($(".jexcel_content").width()-20);
+				});
+				var MGridcheckNewchanges = false
+				$(document).on("paste keypress", "#spreadsheetCate tr td:not(:first)", function (e) {
+						
+						 MGridcheckNewchanges = true
+			  })
+			  
+			  
+			  
+			  
+				function renameoractiveCat(){
+							MGridcheckNewchanges = false
+							var rows = jExcelCostGridCateg.rows;
+							var headers = jExcelCostGridCateg.getHeaders().split(',');
+							var data_push = []
+							var Exits = false
+							for (var z = 0; z < cellchangeRow.length; z++) {
+									var rowdata = jExcelCostGridCateg.getRowData(cellchangeRow[z]);
+									
+									var objsec = {};
+										objsec.Category_UID = rowdata[3];
+										objsec.Category = rowdata[1] != ''?rowdata[1]:rowdata[0];
+										objsec.AddedBy = username;
+										objsec.Active = rowdata[2] == false?"1":"0";
+										data_push.push(objsec)	
+
+											if(ExitCate.indexOf(rowdata[1]) != -1){
+												Exits =true
+											}
+							}
+							if(Exits){
+								alert("This category name is already used.  Please enter a unique name.");
+								return;
+							}
+							console.log(data_push)
+							
+							
+							if(data_push.length != 0){
+								
+								 $.ajax({
+										url: apiBaseUrl+"UpdateCategoryv2",
+										dataType: 'json',
+										type: 'post',
+										contentType: 'application/json',
+										data: JSON.stringify(data_push),//{ "Category":nch, "AddedBy": username,"Active":text,'Category_UID':$("#ddlEditCategories :selected").val()}),
+										processData: false,
+										success: function (resp) {
+											var msg ='Successfully Updated category.';
+										   /* if (resp) {
+												categories = [];
+												loadCategories();
+											}*/
+											if(resp){
+												$("#spanCostGridMessage").css('color','#015991')
+											}
+											
+											 categories = [];
+												loadCategories();
+											
+											$("#spanInsertCatMessagesU").html(msg);
+											/*setTimeout(function () {
+												$("#spanInsertCatMessages").html('');
+												$("#txtCategory").val('');
+											}, 2000);*/
+											window.setTimeout(function () {
+												$("#spanInsertCatMessagesU").html('');
+												var year = parseInt($("#divYear").html());
+												loadCostGrid(year, Jxcel_data);
+												$("#editcategoryModal").hide();
+											}, 2000);
+
+										},
+										error: function (jqXhr, textStatus, errorThrown) {
+											$("#spanInsertCatMessagesU").html('Failed adding category.');
+											/*setTimeout(function () {
+												$("#spanInsertCatMessages").html('');
+												$("#txtCategory").val('');
+											}, 2000);*/
+											window.setTimeout(function () {
+												$("#spanInsertCatMessagesU").html('');
+											}, 2000);
+											console.log(errorThrown);
+										}
+									});
+							}else{
+								$("#editcategoryModal").hide();
+							}
+					
+				}
+				
+			 $("#btnEditCategoryClose").click(function () {
+				 
+				 if(MGridcheckNewchanges){
+					 
+					var chkwindowclose =  confirm("Are you sure you wish to leave?  Changes you made will not be saved.");
+					
+					if(chkwindowclose){
+						$("#txtEditCategory").val('')
+						$('#ddlEditCategories').val('0')
+						
+						//$('#ddlEditCategories').append($('<option></option>').val('0').html('Select Category'));
+						document.getElementById("EditActiveCheck").checked = false;
+						$("#editcategoryModal").hide();
+					}
+				 }else{
+                $("#txtEditCategory").val('')
+				$('#ddlEditCategories').val('0')
+				
+				//$('#ddlEditCategories').append($('<option></option>').val('0').html('Select Category'));
+				document.getElementById("EditActiveCheck").checked = false;
+                $("#editcategoryModal").hide();
+				 }
+            });
+			
+			var cellchange = []
+			var cellchangeRow = []
+			var jExcelCostGridCateg = null 
+
+            $("#btnImportClose").click(function () {
+                var year = parseInt($("#divYear").html()) - 1;
+                $("#importModal").hide();
+            });
+
+            $("#btnImport").click(function () {
+                var year = parseInt($("#divYear").html()) - 1;
+                $("#importModal").show();
+            });
+
+            $("#btnExport").click(function () {
+				year = parseInt($("#divYear").html());
+                $("#spanImportMessages").html('Exporting information for year ' + year + '...');
+
+                $.ajax({
+                    url: apiBaseUrl+"ExportCostDetails/" + projectID + "/" + year,
+                    dataType: 'json',
+                    type: 'post',
+                    contentType: 'application/json',
+                    data: JSON.stringify(allTypes),
+                    processData: false,
+                    success: function (resp) {
+                        if (resp != '') {
+                            var href = apiBaseUrl+"DownloadExportFile/" + resp;
+                            let a = document.createElement('a');
+                            a.href = href;
+                            a.download = "Export_Cost_" + year + ".xlsx";
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                        }
+                        var msg = resp != '' ? 'Successfully exported information for year ' + year + '.' : 'Failed exporting information for year ' + year + '.'
+                        $("#spanImportMessages").html(msg);
+						if(resp != ''){
+								$("#spanCostGridMessage").css('color','#015991')
+							}else{
+								$("#spanCostGridMessage").css('color','red')
+								
+							}
+                        /*setTimeout(function () {
+                            $("#spanImportMessages").html('');
+                        }, 2000);*/
+						window.setTimeout(function () {
+                            $("#spanImportMessages").html('');
+                        }, 2000);
+
+                    },
+                    error: function (jqXhr, textStatus, errorThrown) {
+                        $("#spanCostGridMessage").html('Failed exporting information for year ' + year + '.');
+						$("#spanCostGridMessage").css('color','red')
+                        /*setTimeout(function () {
+                            $("#spanCostGridMessage").html('');
+                        }, 2000);*/
+						window.setTimeout(function () {
+                            $("#spanCostGridMessage").html('');
+                        }, 2000);
+                        console.log(errorThrown);
+                    }
+                })
+				//exportTableToExcel()
+            });
+
+            $("#btnUploadTemplate").click(function () {
+                year = parseInt($("#divYear").html());
+                var formData = new FormData();
+                var totalFiles = document.getElementById("fileUploadTemplate").files.length;
+                for (var i = 0; i < totalFiles; i++) {
+                    var file = document.getElementById("fileUploadTemplate").files[i];
+                    formData.append("Template", file);
+                }
+                formData.append("Category", JSON.stringify(categories));
+                formData.append("Type", JSON.stringify(allTypes));
+                formData.append("username", username);
+                $("#spanImportMessages").html('Importing information for year ' + year + '...');
+                $.ajax({
+                    type: "POST",
+                    url: apiBaseUrl+"ImportCostTemplateData/" + projectID + "/" + year,
+                    data: formData,
+                    dataType: 'json',
+                    contentType: false,
+                    processData: false,
+                    success: function (resp) {
+                        var msg = resp ? 'Successfully imported information for year ' + year + '.' : 'Failed importing information for year ' + year + '.'
+						
+						if(resp){
+								$("#spanCostGridMessage").css('color','#015991')
+							}else{
+								$("#spanCostGridMessage").css('color','red')
+								
+							}
+                        $("#spanImportMessages").html(msg);
+                        /*setTimeout(function () {
+                            $("#spanImportMessages").html('');
+                            $("#btnImportClose").click();
+                            loadCostGrid(year);
+                        }, 2000);*/
+						window.setTimeout(function () {
+                            $("#spanImportMessages").html('');
+                            $("#btnImportClose").click();
+                            loadCostGrid(year);
+                        }, 2000);
+                    },
+                    error: function (error) {
+                       // alert("errror");
+                    }
+                });
+            });
+
+            $("#btnDownloadImportTemplate").click(function () {
+                year = parseInt($("#divYear").html());
+                $("#spanImportMessages").html('Preparing template for year ' + year + '.');
+
+                var data = {
+                    Category: categories,
+                    Type: allTypes
+                }
+
+                $.ajax({
+                    url: apiBaseUrl+"ExportCostTemplate/" + projectID + "/" + year,
+                    dataType: 'json',
+                    type: 'post',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    processData: false,
+                    success: function (resp) {
+                        if (resp != '') {
+                            var href = apiBaseUrl+"DownloadImportFile/" + resp;
+                            let a = document.createElement('a');
+                            a.href = href;
+                            a.download = "Excel download.xlsx";
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                        }
+                        var msg = resp != '' ? 'Successfully prepared template for year ' + year + '.' : 'Failed preparing template for year ' + year + '.'
+                        $("#spanImportMessages").html(msg);
+						
+						if(resp != ''){
+								$("#spanCostGridMessage").css('color','#015991')
+							}else{
+								$("#spanCostGridMessage").css('color','red')
+								
+							}
+                        /*setTimeout(function () {
+                            $("#spanImportMessages").html('');
+                        }, 2000);*/
+						window.setTimeout(function () {
+                            $("#spanImportMessages").html('');
+                        }, 2000);
+
+                    },
+                    error: function (jqXhr, textStatus, errorThrown) {
+                        $("#spanCostGridMessage").html('Failed preparing template for year ' + year + '.');
+						$("#spanCostGridMessage").css('color','red')
+                        /*setTimeout(function () {
+                            $("#spanCostGridMessage").html('');
+                        }, 2000);*/
+						window.setTimeout(function () {
+                            $("#spanCostGridMessage").html('');
+                        }, 2000);
+                        console.log(errorThrown);
+                    }
+                });
+
+                //$("#categoryModal").show();
+            });
+
+            $("#btnPrevious").click(function () {
+                var year = parseInt($("#divYear").html()) - 1;
+                loadCostGrid(year, CostGridData);
+            });
+		/*	var PYer = false
+			function CallSummaryPrevYear(){
+				var year = parseInt($("#divYear").html()) - 1;
+				loadCostGrid(year, CostGridData);
+			}*/
+			
+			var PYer = false
+			function CallSummaryPrevYear(){
+				PYer = true
+				 $("#btnSave").click()
+				//var year = parseInt($("#divYear").html()) - 1;
+				//loadCostGrid(year, CostGridData);
+			}
+			function CallSummaryPrevYearR(){				
+				var year = parseInt($("#divYear").html()) - 1;
+				loadCostGrid(year, CostGridData);
+			}
+
+          /*  $("#btnNext").click(function () {
+                var year = parseInt($("#divYear").html()) + 1;
+                loadCostGrid(year, CostGridData);
+            });*/
+			
+			function SBDataclick (){
+				ggriddatachngae =false; 
+				$("#spanCostGridMessage").css('color','#015991')
+				 year = parseInt($("#divYear").html());
+                $("#spanCostGridMessage").html('Saving information for year ' + year + '.');
+
+                var data = mapJexcelToDataBC(year);
+				//data = []
+				if(data.length != 0){
+                $.ajax({
+                    url: apiBaseUrl+"SaveCostDetailsBase",//SaveCostDetails",
+                    dataType: 'json',
+                    type: 'post',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    processData: false,
+                    success: function (resp) {
+                        var msg = resp ? 'Successfully saved information for year ' + year + '.' : 'Failed saving information for year ' + year + '.'
+                        $("#spanCostGridMessage").html(msg);
+						if(resp){
+								$("#spanCostGridMessage").css('color','#015991')
+							}else{
+								$("#spanCostGridMessage").css('color','red')
+								
+							}
+                        /*setTimeout(function () {
+                            $("#spanCostGridMessage").html('');
+                            loadCostGrid(year);
+                        }, 2000);*/
+						
+						Cost_Snapshot()
+						window.setTimeout(function () {
+                            $("#spanCostGridMessage").html('');
+                            loadCostGrid(year);
+                        }, 2000);
+                    },
+                    error: function (jqXhr, textStatus, errorThrown) {
+                        $("#spanCostGridMessage").html('Failed saving information for year ' + year + '.');
+						$("#spanCostGridMessage").css('color','red')
+                        /*setTimeout(function () {
+                            $("#spanCostGridMessage").html('');
+                        }, 2000);*/
+						window.setTimeout(function () {
+                            $("#spanCostGridMessage").html('');
+                        }, 2000);
+                        console.log(errorThrown);
+                    }
+                });
+				
+				}
+			}
+			function Cost_Snapshot(){
+					var year = parseInt($("#divYear").html());
+					var CData = [];
+					CData.push({
+                            AddedBy: username,
+                            Category_UID: year,
+                            projectId: projectID,
+                        });				   
+				   if(CData.length != 0){
+								var CDatal = CData.length;
+								 for (var i = 0; i < CData.length; i++) {
+									 var Gman = i+1
+										$.ajax({
+											url: apiBaseUrl+"TakeSnapshot",
+											dataType: 'json',
+											type: 'post',
+											contentType: 'application/json',
+											data: JSON.stringify(CData[i]),
+											processData: false,
+											success: function (resp) { // information for year ' + year + '.' information for year ' + year + '.
+												console.log(resp)
+											},
+											error: function (jqXhr, textStatus, errorThrown) {
+												console.log(jqXhr)
+											}
+										});
+						}
+					
+					}
+			
+			}
+
+            $("#btnSave").click(function () {
+				$("#spanCostGridError").hide();
+				ggriddatachngae =false;
+				$("#spanCostGridMessage").css('color','#015991')
+				//document.getElementById("forecastCheck").checked = false;
+                year = parseInt($("#divYear").html());
+                $("#spanCostGridMessage").html('Saving information for year ' + year + '.');
+
+                var data = mapJexcelToData(year);
+				//data = []
+				if(data.length != 0){
+                $.ajax({
+                    url: apiBaseUrl+"SaveCostDetailsBase",
+                    dataType: 'json',
+                    type: 'post',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    processData: false,
+                    success: function (resp) {
+                        var msg = resp ? 'Successfully saved information for year ' + year + '.' : 'Failed saving information for year ' + year + '.'
+						if(resp){
+								$("#spanCostGridMessage").css('color','#015991')
+							}else{
+								$("#spanCostGridMessage").css('color','red')
+								
+							}
+                        $("#spanCostGridMessage").html(msg);
+                        /*setTimeout(function () {
+                            $("#spanCostGridMessage").html('');
+                            loadCostGrid(year);
+                        }, 2000);*/
+						window.setTimeout(function () {
+                            $("#spanCostGridMessage").html('');
+                           // loadCostGrid(year);
+						   
+						   if(nextYer){
+									nextYer = false;
+									Nyear = parseInt($("#divYear").html()) + 1;
+									loadCostGrid(Nyear);
+								}
+								else if(PYer){
+									PYer = false;
+									Pyear = parseInt($("#divYear").html()) - 1;
+									loadCostGrid(Pyear);
+								}
+								else{
+										 loadCostGrid(year);
+								}
+                        }, 2000);
+                    },
+                    error: function (jqXhr, textStatus, errorThrown) {
+                        $("#spanCostGridMessage").html('Failed saving information for year ' + year + '.');
+						$("#spanCostGridMessage").css('color','red')
+                        /*setTimeout(function () {
+                            $("#spanCostGridMessage").html('');
+                        }, 2000);*/
+						window.setTimeout(function () {
+                            $("#spanCostGridMessage").html('');
+                        }, 2000);
+                        console.log(errorThrown);
+                    }
+                });
+				
+				}
+				
+							
+            });
+
+            function loadCategories() {
+                $('#ddlCategories').find('option').remove().end()
+                    .append($('<option></option>').val('0').html('Loading Categories.'));
+                if (categories.length == 0) {
+                    $.ajax({
+                        url: apiBaseUrl+"AllCategories",
+                        type: 'get',
+                        contentType: 'application/json',
+                        processData: false,
+                        success: function (resp) {
+                            categories = resp;
+                            populateCategories();
+                        },
+                        error: function (jqXhr, textStatus, errorThrown) {
+
+                            console.log(errorThrown);
+                        }
+                    });
+                }
+                else {
+                    populateCategories();
+                }
+            }
+			
+			 function populateCategories() {
+                var cats = $('#ddlCategories');
+				var editCat = $('#ddlEditCategories');
+                $('#ddlCategories').find('option').remove().end();
+				$('#ddlEditCategories').find('option').remove().end();
+                cats.append($('<option></option>').val('0').html('Select Category'));
+				 editCat.append($('<option></option>').val('0').html('Select Category'));
+                $.each(categories, function (indx, cat) {
+					editCat.append($('<option></option>').val(cat.Category_UID).html(cat.Category));
+                    if (selCategories.filter(function (c) { return c.Category_UID == cat.Category_UID }).length == 0) {
+						
+						if(cat.Active != '1' && cat.Category != "Project Level"){
+							cats.append($('<option></option>').val(cat.Category_UID).html(cat.Category));
+						}
+						
+                    }
+                });
+            }
+
+            function populateCategoriesOld() {
+                var cats = $('#ddlCategories');
+                $('#ddlCategories').find('option').remove().end();
+                cats.append($('<option></option>').val('0').html('Select Category'));
+                $.each(categories, function (indx, cat) {
+					if(cat.Category != "Project Level"){
+						if (selCategories.filter(function (c) { return c.Category_UID == cat.Category_UID }).length == 0) {
+							cats.append($('<option></option>').val(cat.Category_UID).html(cat.Category));
+						}
+					}
+                });
+            }
+			
+			
+			function mapJexcelToDataBC(year) {
+				
+				 var data = [];
+                var costjData = jExcelCostGrid.getData();
+				/*var valchk =[{
+						'Type_UID': '4',
+						'Type': 'Variance'
+					}]
+				for (var j = 0; j < allTypes.length; j++) {
+				valchk.push(allTypes[j])
+				}*/
+                for (var i = allTypes.length; i < costjData.length; i++) {
+				//7 11 15 19
+					if(costjData[i][1].trim() != 'Variance'){
+							var Namec = costjData[i][1] == "Baseline" ? "Budget":costjData[i][1];
+						var obj = {
+							"projectId": projectID,
+							//"category": costjData[i][0],
+							//"categoryId": categories.filter(function (f) { return f['Category'] == costjData[i][0] })[0]['Category_UID'],
+							"category": $("<div>").html(costjData[i][0]).text(),
+							"categoryId": categories.filter(function (f) { return f['Category'] == $("<div>").html(costjData[i][0]).text() })[0]['Category_UID'],
+								
+							"type": Namec,//costjData[i][1],
+							"typeId": allTypes.filter(function (f) { return f['Type'] == Namec })[0]['Type_UID'],
+							"addedBy": username,
+						};
+						for (var j = 4; j < costjData[i].length; j++) {
+							var valuObj = JSON.parse(JSON.stringify(obj));
+							valuObj.month = j - 3;
+							valuObj.year = year;
+							valuObj.value = costjData[i][j] != "" ? costjData[i][j].replace("$", "").trim() : null;
+
+							data.push(valuObj);
+						}
+						/*for (var j = 4; j < costjData[i].length; j++) {
+							if( j != 7 &&  j != 11 &&  j != 15 && j != 19){
+								var Mth = j - 3;
+								if(j > 7 && j < 11){
+								 Mth = j - 4;
+								}
+								else if(j > 11 && j < 15){
+									Mth = j - 5;
+								}else if(j > 15 && j < 19){
+									Mth = j - 6;
+								}							
+								var valuObj = JSON.parse(JSON.stringify(obj));
+								//valuObj.month = Mth;
+								//valuObj.year = year;
+								if(Mth<4)
+										{
+											valuObj.year = year-1;
+											 valuObj.month = Mth + 9;
+										}
+										else
+										{
+											 valuObj.year = year;
+											  valuObj.month = Mth - 3; //- 3+5;
+										}
+								valuObj.value = costjData[i][j] != "" ? costjData[i][j].replace("$", "").trim() : null;
+								if(j != 19){
+									data.push(valuObj);
+								}
+							}
+							
+						}*/
+					}
+                }
+				
+				var Bdata = []
+				  for (var i =0; i < data.length; i++) {
+					  
+					  Bdata.push(data[i])
+					  
+					  var obj = {
+							"projectId": data[i].projectId,
+							"category":data[i].category,
+							"categoryId":data[i].categoryId,								
+							"type": 'Budget',
+							"typeId": allTypes.filter(function (f) { return f['Type'] == 'Budget'})[0]['Type_UID'],
+							"addedBy": username,
+							"month":data[i].month,
+							"year":data[i].year,
+							"value":data[i].value,
+						};
+					  Bdata.push(obj)
+					  
+				  }
+				
+
+                return Bdata;
+				
+			}
+			
+			function mapJexcelToData(year) {
+                var data = [];
+                var costjData = jExcelCostGrid.getData();
+                for (var i = allTypes.length; i < costjData.length; i++) {
+						if(costjData[i][1].trim() != 'Variance' && costjData[i][0] != 'Total'){
+						var Namec = costjData[i][1] == "Baseline" ? "Budget":costjData[i][1];
+						var obj = {
+							"projectId": projectID,
+								//"category": costjData[i][0],
+								//"categoryId": categories.filter(function (f) { return f['Category'] == costjData[i][0] })[0]['Category_UID'],
+								"category": $("<div>").html(costjData[i][0]).text(),
+								"categoryId": categories.filter(function (f) { return f['Category'] == $("<div>").html(costjData[i][0]).text() })[0]['Category_UID'],
+									
+								"type": Namec,//costjData[i][1],
+								"typeId": allTypes.filter(function (f) { return f['Type'] == Namec })[0]['Type_UID'],
+								"addedBy": username,
+						};
+						for (var j = 4; j < costjData[i].length; j++) {
+							var valuObj = JSON.parse(JSON.stringify(obj));
+							valuObj.month = j - 3;
+							valuObj.year = year;
+							valuObj.value = costjData[i][j] != "" ? costjData[i][j].replace("$", "").trim() : null;
+
+							data.push(valuObj);
+						}
+					}
+				}
+
+                return data;
+            }
+            function mapJexcelToDataOLL(year) {
+                var data = [];
+                var costjData = jExcelCostGrid.getData();
+                for (var i = allTypes.length; i < costjData.length; i++) {
+				//7 11 15 19
+					if(costjData[i][1] == 'Forecast' && costjData[i][0] != 'Total'){
+							var Namec = costjData[i][1] == "Baseline" ? "Budget":costjData[i][1];
+						var obj = {
+							"projectId": projectID,
+							//"category": costjData[i][0],
+							//"categoryId": categories.filter(function (f) { return f['Category'] == costjData[i][0] })[0]['Category_UID'],
+							"category": $("<div>").html(costjData[i][0]).text(),
+							"categoryId": categories.filter(function (f) { return f['Category'] == $("<div>").html(costjData[i][0]).text() })[0]['Category_UID'],
+								
+							"type": Namec,//costjData[i][1],
+							"typeId": allTypes.filter(function (f) { return f['Type'] == Namec })[0]['Type_UID'],
+							"addedBy": username,
+						};
+						for (var j = 4; j < costjData[i].length; j++) {
+							if( j != 7 &&  j != 11 &&  j != 15 && j != 19){
+								var Mth = j - 3;
+								if(j > 7 && j < 11){
+								 Mth = j - 4;
+								}
+								else if(j > 11 && j < 15){
+									Mth = j - 5;
+								}else if(j > 15 && j < 19){
+									Mth = j - 6;
+								}
+								
+						
+								var valuObj = JSON.parse(JSON.stringify(obj));
+								//valuObj.month = Mth;
+								//valuObj.year = year;
+										if(Mth<4)
+										{
+											valuObj.year = year-1;
+											 valuObj.month = Mth + 9;
+										}
+										else
+										{
+											 valuObj.year = year;
+											  valuObj.month = Mth - 3; //- 3+5;
+										}
+								valuObj.value = costjData[i][j] != "" ? costjData[i][j].replace("$", "").trim() : null;
+								if(j != 19){
+									data.push(valuObj);
+								}
+							}
+							
+						}
+					}
+                }
+
+                return data;
+            }
+
+            function getParameterByName(name) {
+
+                //return "1";//"9991b509-234b-e911-afa9-00155dc44b20";
+
+                name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+                var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                    results = regex.exec(location.search.toLowerCase());
+                return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+            }
+var projectLevel =false
+            function loadCostGrid(year) {
+					projectLevel = false;
+                $("#divYear").html(year);
+                $("#spanCostGridMessage").html('Fetching information for year ' + year + '.');
+                $.ajax({
+                    url: apiBaseUrl+"CostDetails/" + projectID + "/" + year,
+                    type: 'post',
+                    contentType: 'application/json',
+                    data: JSON.stringify(allTypes),
+                    processData: false,
+                    success: function (costData) {
+                        CostGridData = JSON.parse(JSON.stringify(costData));
+						
+						$.each(CostGridData, function (indx, cat) {
+								
+								if(cat.Category == "Project Level"){
+									projectLevel = true;
+								}
+							});
+							
+							if(projectLevel){
+									$("#showBtn").show();
+									$("#MainBtn").hide();
+									$(".hidelabel").hide();
+							}else{
+								$("#showBtn").show();
+								$("#MainBtn").hide();
+								$(".hidelabel").show();
+							}
+							$(".hidebaseline").show();
+							if(CostGridData.length == 0){
+							$(".hidebaseline").hide();
+							if($("input[title='Project Name']").length != 0){
+								$("#showBtn").hide();
+								$("#MainBtn").show();
+								}else{$("#showBtn").hide();
+								$("#Welcomepage").show();
+								$("#MainBtn").hide();}
+							}
+
+                        loadData(year, costData);
+                        $("#spanCostGridMessage").html('Successfully fetched information for year ' + year + '.');
+						$("#spanCostGridMessage").css('color','#015991')
+                        /*setTimeout(function () {
+                            $("#spanCostGridMessage").html('');
+                        }, 2000);*/
+						window.setTimeout(function () {
+                            $("#spanCostGridMessage").html('');
+                        }, 2000);
+                    },
+                    error: function (jqXhr, textStatus, errorThrown) {
+                        $("#spanCostGridMessage").html('Error fetching information for year ' + year + '.');
+						$("#spanCostGridMessage").css('color','red')
+                        /*setTimeout(function () {
+                            $("#spanCostGridMessage").html('');
+                        }, 2000);*/
+						window.setTimeout(function () {
+                            $("#spanCostGridMessage").html('');
+                        }, 2000);
+                        console.log(errorThrown);
+                    }
+                });
+            }
+
+            function loadData(year, costData) {
+			
+                selCategories = [];
+                $("#divYear").html(year);
+                CostJExcelData = mapCostGridJExcelData(costData, year);
+                createCostGridJExcelTable(CostJExcelData, year);
+                // alignColumns();
+                formatCostGridJExcel();
+                //lastCostGridUpdatedDate(projData);
+                loadCategories();
+            }
+			
+			function mapCostGridJExcelDataOLD(response, year) {
+				 var currentYearDataEdit = [];               
+				 var multiYear = JSON.parse(JSON.stringify(response));
+                var multiYearTotal = {};
+                multiYearTotal = getMultiYearTotal(multiYear, multiYearTotal, year);
+                var currentYearData = JSON.parse(JSON.stringify(response));
+				/*for(i=0;i<currentYearData.length;i++){
+					currentYearData[i]['Added_On'] = parseInt(currentYearData[i]['Added_On'].replace(/\//g,"").replace("Date(","").replace(")",""));		
+					currentYearData[i]['Added_On'] = new Date(currentYearData[i]['Added_On']);
+					currentYearData[i]['Modified_On'] = parseInt(currentYearData[i]['Modified_On'].replace(/\//g,"").replace("Date(","").replace(")",""));		
+					currentYearData[i]['Modified_On'] = new Date(currentYearData[i]['Modified_On']);
+					currentYearData[i]['MonthYear'] = parseInt(currentYearData[i]['MonthYear'].replace(/\//g,"").replace("Date(","").replace(")",""));		
+					currentYearData[i]['MonthYear'] = new Date(currentYearData[i]['MonthYear']);
+				}
+				/* currentYearData = currentYearData.filter(function (f) {
+					 f["CYear"] = new Date(f['MonthYear']).getFullYear();
+					f["CMonth"] = new Date(f['MonthYear']).getMonth();
+					 return new Date(f['MonthYear']).getFullYear() == year
+					 });*/
+					 var datacheck = []
+					 var newdatabind = currentYearData
+                currentYearData = currentYearData.filter(function (f) { 
+				//var yearcheck = ConvertJsonDateString(f["MonthYear"])
+					 f["CYear"] = year;//new Date(f['MonthYear']).getFullYear();
+					f["CMonth"] = new Date(f['MonthYear']).getMonth();
+					if(new Date(f['MonthYear']).getFullYear() == (year-1)){
+							if(new Date(f['MonthYear']).getMonth() >8){
+								//return new Date(f['MonthYear']).getFullYear() == year
+								datacheck.push(f)
+							}
+					}else if(new Date(f['MonthYear']).getFullYear() == (year)){
+						if(new Date(f['MonthYear']).getMonth() <9){
+								//return new Date(f['MonthYear']).getFullYear() == year
+								datacheck.push(f)
+							}
+					}				
+				});
+                var data = [];
+				/*datacheck.sort(function(a, b) {
+						if (a.CMonth !== b.CMonth) {
+							return a.CMonth - b.CMonth
+						}
+						if (a.CMonth === b.CMonth) {
+						  return 0;
+						}
+						return a.CMonth > b.CMonth ? 1 : -1;
+					});*/
+				//datacheck=datacheck.sort(function(a,b){a.CYear=a.CYear.toLowerCase();b.CYear=b.CYear.toLowerCase();if(a==b) return 0; if(a>b) return 1; return -1;})
+				
+                if (datacheck && datacheck.length > 0) {
+					currentYearData = datacheck;
+                    var year = 0;
+                    var category = '';
+                    var type = '';
+                    var row = [];
+
+                    var types = _.uniqBy(currentYearData, function (e) {
+                        return e['Type_UID'];
+                    });
+                    var categoriesmain = _.uniqBy(currentYearData, function (e) {
+                        return e['Category_UID'];
+                    });
+                    selCategories = categoriesmain;
+                    for (var i = 0; i < types.length; i++) {
+                        fields = [];
+                        for (var k = 0; k < categoriesmain.length; k++) {
+                            fields.push('C' + ((types.length) * (k + 1) + 1 + data.length).toString());
+                        }
+                        row = getTotalRow(i, fields, categoriesmain, types, data);
+                        data.push(row);
+                    }
+                    row = [];
+                    for (var i = 0; i < currentYearData.length; i++) {
+                        var currDate = new Date(currentYearData[i]['MonthYear']);
+                        var currMonth = currDate.getMonth();
+						if(currMonth == 0){currMonth =3}
+						else if(currMonth == 1){currMonth =4}
+						else if(currMonth == 2){currMonth =5}
+						else if(currMonth == 3){currMonth =6}
+						else if(currMonth == 4){currMonth =7}
+						else if(currMonth == 5){currMonth =8 }
+						else if(currMonth == 6){currMonth =9}
+						else if(currMonth == 7){currMonth =10}
+						else if(currMonth == 8){currMonth =11}
+						else if(currMonth == 9){currMonth =0}
+						else if(currMonth == 10){currMonth =1}
+						else if(currMonth == 11){currMonth =2}
+                        var currYear = currentYearData[i]['CYear'];//currDate.getFullYear();
+                        var currCategory = currentYearData[i]['LTStructUid'];
+                        var currType = currentYearData[i]['Type_UID'];
+                        if (currYear != year) {
+                            if (row.length > 0) {
+                                data.push(row);
+                            }
+                            year = currYear;
+                            category = currCategory;
+                            type = currType;
+                            row = getRowCommonData(i, data, currentYearData, multiYearTotal);
+
+                        }
+                        if (category != currCategory) {
+                            if (row.length > 0) {
+                                data.push(row);
+                            }
+                            year = currYear;
+                            category = currCategory;
+                            type = currType;
+                            row = getRowCommonData(i, data, currentYearData, multiYearTotal);
+                        }
+
+                        if (type != currType) {
+                            if (row.length > 0) {
+                                data.push(row);
+                            }
+                            year = currYear;
+                            category = currCategory;
+                            type = currType;
+                            row = getRowCommonData(i, data, currentYearData, multiYearTotal);
+                        }
+						if(currMonth== 4 || currMonth == 3 || currMonth == 5){
+							currMonth =currMonth+1
+						}
+						else if(currMonth== 6 || currMonth == 7 || currMonth == 8){
+							currMonth =currMonth+2
+						}
+						else if(currMonth== 9 || currMonth == 10 || currMonth == 11){
+							currMonth =currMonth+3
+						}
+						var mas =currMonth + 4
+						console.log(currMonth +'|'+ mas +'|'+currentYearData[i]['Value'])
+                        row[currMonth + 4] = (currentYearData[i]['Value']);
+                    }
+                    if (row != undefined) {
+                        data.push(row);
+                    }
+                }
+				else{
+					currentYearData = newdatabind;
+						 var year = 0;
+                    var category = '';
+                    var type = '';
+                    var row = [];
+
+                    var types = _.uniqBy(currentYearData, function (e) {
+                        return e['Type_UID'];
+                    });
+                    var categoriesmain = _.uniqBy(currentYearData, function (e) {
+                        return e['Category_UID'];
+                    });
+                    selCategories = categoriesmain;
+                    for (var i = 0; i < types.length; i++) {
+                        fields = [];
+                        for (var k = 0; k < categoriesmain.length; k++) {
+                            fields.push('C' + ((types.length) * (k + 1) + 1 + data.length).toString());
+                        }
+                        row = getTotalRow(i, fields, categoriesmain, types, data);
+                        data.push(row);
+                    }
+                    row = [];
+                    for (var i = 0; i < currentYearData.length; i++) {
+                        var currDate = new Date(currentYearData[i]['MonthYear']);
+                        var currMonth = currDate.getMonth();
+						if(currMonth == 0){currMonth =3}
+						else if(currMonth == 1){currMonth =4}
+						else if(currMonth == 2){currMonth =5}
+						else if(currMonth == 3){currMonth =6}
+						else if(currMonth == 4){currMonth =7}
+						else if(currMonth == 5){currMonth =8 }
+						else if(currMonth == 6){currMonth =9}
+						else if(currMonth == 7){currMonth =10}
+						else if(currMonth == 8){currMonth =11}
+						else if(currMonth == 9){currMonth =0}
+						else if(currMonth == 10){currMonth =1}
+						else if(currMonth == 11){currMonth =2}
+                        var currYear = currentYearData[i]['CYear'];//currDate.getFullYear();
+                        var currCategory = currentYearData[i]['LTStructUid'];
+                        var currType = currentYearData[i]['Type_UID'];
+                        if (currYear != year) {
+                            if (row.length > 0) {
+                                data.push(row);
+                            }
+                            year = currYear;
+                            category = currCategory;
+                            type = currType;
+                            row = getRowCommonData(i, data, currentYearData, multiYearTotal);
+
+                        }
+                        if (category != currCategory) {
+                            if (row.length > 0) {
+                                data.push(row);
+                            }
+                            year = currYear;
+                            category = currCategory;
+                            type = currType;
+                            row = getRowCommonData(i, data, currentYearData, multiYearTotal);
+                        }
+
+                        if (type != currType) {
+                            if (row.length > 0) {
+                                data.push(row);
+                            }
+                            year = currYear;
+                            category = currCategory;
+                            type = currType;
+                            row = getRowCommonData(i, data, currentYearData, multiYearTotal);
+                        }
+						currentYearData[i]['Value'] = ''
+						
+						if(currMonth== 4 || currMonth == 3 || currMonth == 5){
+							currMonth =currMonth+1
+						}
+						else if(currMonth== 6 || currMonth == 7 || currMonth == 8){
+							currMonth =currMonth+2
+						}
+						else if(currMonth== 9 || currMonth == 10 || currMonth == 11){
+							currMonth =currMonth+3
+						}
+						var mas =currMonth + 4
+						console.log(currMonth +'|'+ mas +'|'+currentYearData[i]['Value'])
+                        row[currMonth + 4] = (currentYearData[i]['Value']);
+                    }
+                    if (row != undefined) {
+                        data.push(row);
+                    }
+				}
+
+			   return data;
+            }
+
+            function mapCostGridJExcelData(response, year) {
+                var multiYear = JSON.parse(JSON.stringify(response));
+                var multiYearTotal = {};
+                multiYearTotal = getMultiYearTotal(multiYear, multiYearTotal, year);
+                var currentYearData = JSON.parse(JSON.stringify(response));
+                currentYearData = currentYearData.filter(function (f) { return new Date(f['MonthYear']).getFullYear() == year });
+                var data = [];
+                if (currentYearData && currentYearData.length > 0) {
+                    var year = 0;
+                    var category = '';
+                    var type = '';
+                    var row = [];
+
+                    var types = _.uniqBy(currentYearData, function (e) {
+                        return e['Type_UID'];
+                    });
+					types.push({
+							AddedBy: "",
+							Added_On: "",
+							Category: types[1].Category,
+							Category_UID: '',
+							FiscalPeriodName:types[1].FiscalPeriodName,
+							ID: '',
+							ModifiedBy: "",
+							Modified_On: "",
+							MonthYear: types[1].MonthYear,
+							Project_UID: types[1].Project_UID,
+							Type: "Variance",
+							Type_UID: 4,
+							Value: ''});
+                    var categoriesmain = _.uniqBy(currentYearData, function (e) {
+                        return e['Category_UID'];
+                    });
+                    selCategories = categoriesmain;
+                    for (var i = 0; i < types.length; i++) {
+                        fields = [];
+                        for (var k = 0; k < categoriesmain.length; k++) {
+                            fields.push('C' + ((types.length) * (k + 1) + 1 + data.length).toString());
+                        }
+                        row = getTotalRow(i, fields, categoriesmain, types, data);
+                        data.push(row);
+                    }
+                    row = [];
+                    for (var i = 0; i < currentYearData.length; i++) {
+                        var currDate = new Date(currentYearData[i]['MonthYear']);
+                        var currMonth = currDate.getMonth();
+                        var currYear = currDate.getFullYear();
+                        var currCategory = currentYearData[i]['Category_UID'];
+                        var currType = currentYearData[i]['Type_UID'];
+                        if (currYear != year) {
+                            if (row.length > 0) {
+                                data.push(row);
+								if(row[1] =='Actual'){
+									var r = []
+									 r[0] = row[0]
+									 r[1] = 'Variance '
+									data.push(r);
+								}
+                            }
+                            year = currYear;
+                            category = currCategory;
+                            type = currType;
+                            row = getRowCommonData(i, data, currentYearData, multiYearTotal);
+
+                        }
+                        if (category != currCategory) {
+                            if (row.length > 0) {
+                                data.push(row);
+								if(row[1] =='Actual'){
+									var r = []
+									 r[0] = row[0]
+									 r[1] = 'Variance '
+									data.push(r);
+								}
+                            }
+                            year = currYear;
+                            category = currCategory;
+                            type = currType;
+                            row = getRowCommonData(i, data, currentYearData, multiYearTotal);
+                        }
+
+                        if (type != currType) {
+                            if (row.length > 0) {
+                                data.push(row);
+								if(row[1] =='Actual'){
+									var r = []
+									 r[0] = row[0]
+									 r[1] = 'Variance '
+									data.push(r);
+								}
+                            }
+                            year = currYear;
+                            category = currCategory;
+                            type = currType;							
+                            row = getRowCommonData(i, data, currentYearData, multiYearTotal);
+                        }
+					/*	if(currMonth== 4 || currMonth == 3 || currMonth == 5){
+							currMonth =currMonth+1
+						}
+						else if(currMonth== 6 || currMonth == 7 || currMonth == 8){
+							currMonth =currMonth+2
+						}
+						else if(currMonth== 9 || currMonth == 10 || currMonth == 11){
+							currMonth =currMonth+3
+						}
+						var mas =currMonth + 4
+						console.log(currMonth +'|'+ mas +'|'+currentYearData[i]['Value'])*/
+                        row[currMonth + 4] = (currentYearData[i]['Value']);
+                    }
+                    if (row != undefined) {
+                        data.push(row);
+						if(row[1] =='Actual'){
+									var r = []
+									 r[0] = row[0]
+									 r[1] = 'Variance '
+									data.push(r);
+								}
+                    }
+                }
+                return data;
+            }
+             function getRowCommonData(i, data, currentYearData, multiYearTotal) {
+                var row = [];
+                row.length = 20;
+                row[0] = currentYearData[i]['Category'];
+                row[1] = currentYearData[i]['Type'];
+                row[2] = '=SUM(D' + (data.length + 1) + ',' +(multiYearTotal[[row[0] + row[1]]] && multiYearTotal[[row[0] + row[1]]].Value ? multiYearTotal[[row[0] + row[1]]].Value : 0) + ')';  //D' + (data.length + 1) + ',' +
+                row[3] = '=SUM(E' + (data.length + 1) + ':P' + (data.length + 1) + ')';
+
+                return row;
+            }
+            function getTotalRowold(i, fields, categoriesmain, types, data) {
+			if(types[i]['Type'] != "Variance"){
+                var row = [];
+                row.length = 20;
+                row[0] = 'Total';
+                row[1] = types[i]['Type'];
+                row[2] = '=SUM(' + fields.join(',') + ')';
+               // row[3] = '=SUM(E' + (data.length + 1) + ':G' + (data.length + 1) + ')';
+			    row[3] = '=SUM(E' + (data.length + 1) + ':G' + (data.length + 1) + '+I' + (data.length + 1) + ':K' + (data.length + 1) + '+M' + (data.length + 1) + ':O' + (data.length + 1) + '+Q' + (data.length + 1) + ':S' + (data.length + 1) + ')';
+
+                var columns = ['E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P','Q','R','S','T'];
+                var rowCounter = 4;
+                for (var j = 0; j < columns.length; j++) {
+                    fields = [];
+                    for (var k = 0; k < categoriesmain.length; k++) {
+                        fields.push(columns[j] + ((types.length) * (k + 1) + 1 + data.length).toString());
+                    }
+                    row[rowCounter] = '=SUM(' + fields.join(',') + ')';
+                    rowCounter++;
+                }
+                return row;
+				}
+				
+            }
+
+			  function getTotalRow(i, fields, categoriesmain, types, data) {
+                var row = [];
+                row.length = 21;
+                row[0] = 'Total';
+                row[1] = types[i]['Type'];
+                row[2] = '=SUM(' + fields.join(',') + ')';
+               //  row[3] = '=SUM(E' + (data.length + 1) + ':G' + (data.length + 1) + '+I' + (data.length + 1) + ':K' + (data.length + 1) + '+M' + (data.length + 1) + ':O' + (data.length + 1) + '+Q' + (data.length + 1) + ':S' + (data.length + 1) + ')';
+				 row[3] = '=SUM(E' + (data.length + 1) + ':P' + (data.length + 1) + ')';
+                var columns = ['E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P'];
+                var rowCounter = 4;
+                for (var j = 0; j < columns.length; j++) {
+                    fields = [];
+                    for (var k = 0; k < categoriesmain.length; k++) {
+                        fields.push(columns[j] + ((types.length) * (k + 1) + 1 + data.length).toString());
+                    }
+                    row[rowCounter] = '=SUM(' + fields.join(',') + ')';
+                    rowCounter++;
+                }
+                return row; 
+				
+				
+            }
+			
+			
+			function getMultiYearTotal(multiYear1, multiYearTotal, year) {
+			//	if( year != currentYear){
+               /* multiYear = multiYear.filter(function (f) { 
+				debugger
+				return new Date(f['MonthYear']).getFullYear() != year 
+				})*/
+				var multiYear = []
+				multiYear1.filter(function (f) { 
+					var yearcheck = ConvertJsonDateStringMY(f["MonthYear"])
+						 f["AYear"] = yearcheck.split('|')[1]//new Date(f['MonthYear']).getFullYear();
+						f["AMonth"] = yearcheck.split('|')[0] //new Date(f['MonthYear']).getMonth();
+						console.log(f["AMonth"])
+						if(parseFloat( f["AYear"]) == year){
+								if(parseFloat( f["AMonth"]) < 9){
+									//return f["AYear"] != f["AYear"]
+									//datacheck.push(f)
+								}else{
+								//	multiYear.push(f)
+								}
+						}/*else if(parseFloat( f["AYear"]) == (year-1)){
+							if(parseFloat( f["AMonth"]) > 8){
+									//return f["AYear"] != f["AYear"]
+									//datacheck.push(f)
+								}else{
+									multiYear.push(f)
+								}
+						}*/
+						else{
+									multiYear.push(f)
+								}				
+					});
+					
+				
+                for (var xx = 0; xx < multiYear.length; xx++) {
+					var yearcheck = ConvertJsonDateString(multiYear[xx].MonthYear)
+					 var currDate = new Date(multiYear[xx]['MonthYear']);
+					var currMonth = currDate.getMonth();
+					//if(yearcheck != year){
+                    var id = multiYearTotal[multiYear[xx].Category + multiYear[xx].Type]
+                    if (id) {
+                        id.Value += multiYear[xx].Value != null && multiYear[xx].Value != "" ? multiYear[xx].Value : 0
+                    } else {
+                        multiYearTotal[multiYear[xx].Category + multiYear[xx].Type] = { Value: multiYear[xx].Value != null && multiYear[xx].Value != "" ? multiYear[xx].Value : 0 };
+                    }
+                    multiYear.splice(xx, 1);
+                    xx = xx - 1;
+					//}
+                }
+                return multiYearTotal;
+				
+            }
+					 function ConvertJsonDateString(jsonDate) {
+            var shortDate = null;
+            if (jsonDate) {
+                var regex = /-?\d+/;
+                var matches = regex.exec(jsonDate);
+                var dt = new Date(jsonDate);//parseInt(matches[0]));
+                var month = dt.getMonth() + 1;
+                var monthString = month > 9 ? month : '0' + month;
+                var day = dt.getDate();
+                var dayString = day > 9 ? day : '0' + day;
+                var year = dt.getFullYear();
+                shortDate = monthString + '/' + dayString + '/' + year;
+            }
+            return year;
+        };
+		
+		 function ConvertJsonDateStringMY(jsonDate) {
+            var shortDate = null;
+            if (jsonDate) {
+                var regex = /-?\d+/;
+               // var matches = regex.exec(jsonDate);
+                var dt = new Date(jsonDate);//parseInt(matches[0]));
+                var month = dt.getMonth() ;//+ 1;
+                var monthString = month //> 9 ? month : '0' + month;
+                var day = dt.getDate();
+                var dayString = day > 9 ? day : '0' + day;
+                var year = dt.getFullYear();
+                shortDate = monthString + '|' + year;
+            }
+            return shortDate;
+        };
+            function getMultiYearTotalOld(multiYear, multiYearTotal, year) {
+                multiYear = multiYear.filter(function (f) { return new Date(f['MonthYear']).getFullYear() != year })
+                for (var xx = 0; xx < multiYear.length; xx++) {
+                    var id = multiYearTotal[multiYear[xx].Category + multiYear[xx].Type]
+                    if (id) {
+                        id.Value += multiYear[xx].Value != null && multiYear[xx].Value != "" ? multiYear[xx].Value : 0
+                    } else {
+                        multiYearTotal[multiYear[xx].Category + multiYear[xx].Type] = { Value: multiYear[xx].Value != null && multiYear[xx].Value != "" ? multiYear[xx].Value : 0 };
+                    }
+                    multiYear.splice(xx, 1);
+                    xx = xx - 1;
+                }
+                return multiYearTotal;
+            }
+
+            function getRowCommonData(i, data, currentYearData, multiYearTotal) {
+                var row = [];
+                row.length = 20;
+                row[0] = currentYearData[i]['Category'];
+                row[1] = currentYearData[i]['Type'];
+                row[2] = '=SUM(D' + (data.length + 1) + ',' + (multiYearTotal[[row[0] + row[1]]] && multiYearTotal[[row[0] + row[1]]].Value
+                    ? multiYearTotal[[row[0] + row[1]]].Value : 0) + ')';
+                row[3] = '=SUM(E' + (data.length + 1) + ':P' + (data.length + 1) + ')';
+				//  row[3] = '=SUM(E' + (data.length + 1) + ':G' + (data.length + 1) + '+I' + (data.length + 1) + ':K' + (data.length + 1) + '+M' + (data.length + 1) + ':O' + (data.length + 1) + '+Q' + (data.length + 1) + ':S' + (data.length + 1) + ')';
+                return row;
+            }
+			
+            function createCostGridJExcelTable(data, year) {
+				$("#spanCostGridError").hide();
+				
+				/*for (var i = 2; i < data.length; i++) {
+					if(data[i][0] != 'Total'){
+					//if(data[i][1].trim() == "Variance"){ 							
+							var B =i+1;//-2;
+							var F = i-1
+						data[i][7] = "=(E"+B+"+F"+B+"+G"+B+")"  //"=(H"+B+"-H"+F+")" 
+						data[i][11] = "=(I"+B+"+J"+B+"+K"+B+")"// "=(L"+B+"-L"+F+")"
+						data[i][15]= "=(M"+B+"+N"+B+"+O"+B+")"//    "=(P"+B+"-P"+F+")"
+						data[i][19] = "=(Q"+B+"+R"+B+"+S"+B+")" //"=(T"+B+"-T"+F+")"
+						//console.log(data[i][7])
+						console.log(data[i])
+					 // }
+						
+					}
+				}*/
+				for (var i = 0; i < data.length; i++) {
+					if(data[i][0] != 'Total'){
+					if(data[i][1].trim() == "Variance"){ 							
+							var B =i;//-2;
+							var F = i-1
+						data[i][2] ="=(C"+F+"-C"+B+")"
+						data[i][3] = "=(D"+F+"-D"+B+")"
+						data[i][4] = "=(E"+F+"-E"+B+")"
+						data[i][5] ="=(F"+F+"-F"+B+")"
+						data[i][6] ="=(G"+F+"-G"+B+")"
+						data[i][7] = "=(H"+F+"-H"+B+")"
+						data[i][8] = "=(I"+F+"-I"+B+")"
+						data[i][9] = "=(J"+F+"-J"+B+")"
+						data[i][10] = "=(K"+F+"-K"+B+")"
+						data[i][11] = "=(L"+F+"-L"+B+")"
+						data[i][12] = "=(M"+F+"-M"+B+")"
+					    data[i][13] = "=(N"+F+"-N"+B+")"
+						data[i][14] = "=(O"+F+"-O"+B+")"
+						data[i][15]="=(P"+F+"-P"+B+")"
+						//console.log(data[i][7])
+						console.log(data[i])
+					  }
+						
+					}
+				}
+				Jxcel_data = data;
+				Jxcel_year = year;
+				if(data.length <1){$('#forecastCheck').hide();$('#hideForecast').hide();  }
+				else{$('#forecastCheck').show();$('#hideForecast').show();}
+				/*data.sort(function (a, b) {
+				  if (a[0] == "Total") return -1;
+				  if (b[0] == "Total") return 1;
+				  return b[0].localeCompare(a[0]);
+				});
+				data.sort(function (a, b) {
+				  if (a[0] == "Total") return -1;
+				  if (b[0] == "Total") return 1;
+				  return a[0].localeCompare(b[0]);
+				});*/
+				//data.sort()
+                $("#spreadsheetCostGrid").html('');
+                jExcelCostGrid = jexcel(document.getElementById('spreadsheetCostGrid'), {
+                    data: data,
+                  // tableOverflow:true,
+					//tableWidth: '500%',
+                    //csvHeaders: true,
+					csvFileName:'Cost Grid '+$("#divYear").html()+'',
+					includeHeadersOnDownload:true,
+					mergeCells:{},
+                    // tableOverflow: true,
+                    allowInsertRow: false,
+                    allowManualInsertRow: false,
+                    allowInsertColumn: false,
+                    allowManualInsertColumn: false,
+                    allowDeleteRow: false,
+                    allowDeleteColumn: false,
+					autoIncrement: false,
+					
+					//freezeColumns:4,
+					 columns: getCostGridColumns(year),
+					
+                    copyCompatibility: true,
+					/*nestedHeaders:[
+								[
+									{
+										title: '',
+										colspan: '4',
+									},
+									{
+										title: 'Q1',
+										colspan: '3',
+									},
+									{
+										title: '',
+										colspan: '1',
+									},
+									{
+										title: 'Q2',
+										colspan: '3',
+									},
+									{
+										title: '',
+										colspan: '1',
+									},
+									{
+										title: 'Q3',
+										colspan: '3',
+									},
+									{
+										title: '',
+										colspan: '1',
+									},
+									{
+										title: 'Q4',
+										colspan: '3',
+									}
+								],								
+							],*/
+                    //tableWidth:  '900px',
+                    //tableHeight: 'calc(105%)',// $(window).height() - 200 + 'px',
+                    contextMenu: function () { return false; },
+                    onchange: function (instance, cell, x, y, value) {
+						var iColIndex= $(cell).closest("tr td").prevAll("tr td").length;
+                    //    if (x > 0 && value.length > 9) {
+                    //        var newWidth = value.length * 10.5;
+                    //        jExcelCostGrid.setWidth(x, newWidth);
+                    //    }
+                    //    var td = $(cell);
+                    //    if (!td.hasClass('readonly')) {
+                    //        var newX = x - 1;
+                    //        var newTdHeader = $('td[data-column="' + newX + '"]');
+                    //        if (newTdHeader.html() == 'Lock In') {
+                    //            //$('td[data-x="' + newX + '"][data-y="' + y + '"]').html(value);
+                    //            jExcelCostGrid.setValueFromCoords(newX, y, value, true);
+
+                    //        }
+                    //    }
+					//ggriddatachngae =true;
+						if(iColIndex>=4){
+							alignCostGridColumns(iColIndex-1)
+						}
+						var rowsT =$(instance).find('table').find('tr').length;
+						var cols=$(instance).find('table').find('tr').eq(0).find('td').length;
+						$("#spanCostGridMessage").html("");
+						var hwidth = []
+								for(i=1;i<rowsT;i++)
+									{
+										
+										if($(instance).find('table').find('tr').eq(i).find('td').eq(2).text().trim()=="Forecast")
+													{
+														if($('#spreadsheetCostGrid').find('table').find('tr').eq(i).find('td').eq(4).text() != '' && $('#spreadsheetCostGrid').find('table').find('tr').eq(i).find('td').eq(4).text() != '0' && $('#spreadsheetCostGrid').find('table').find('tr').eq(i).find('td').eq(4).text() != 0){
+												//if($('#spreadsheetCostGrid').find('table').find('tr').eq(i).find('td').eq(4).text().indexOf('.') != -1)	{
+													var numchange = parseFloat($('#spreadsheetCostGrid').find('table').find('tr').eq(i).find('td').eq(4).text().replace('$','').trim().replace(/,/g, ''))									
+														if(numchange.toString().indexOf('.') != -1){
+															if(numchange.toString().split('.')[1].length >2){
+															 numchange =  parseFloat(numchange).toFixed(2);	
+															}
+														}
+														if(numchange != ''){
+																numchange = numchange.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+																}
+														$('#spreadsheetCostGrid').find('table').find('tr').eq(i).find('td').eq(4).html(numchange)
+												
+												//}
+															if(numchange.length >16){
+																 $("#spanCostGridMessage").html("You have exceeded the maximum character length for this field. Please limit to 16 characters, including decimals.");
+																  $("#spanCostGridMessage").css('color','red')
+															}
+														}
+														else if($('#spreadsheetCostGrid').find('table').find('tr').eq(i).find('td').eq(3).text() != '' && $('#spreadsheetCostGrid').find('table').find('tr').eq(i).find('td').eq(3).text() != '0' && $('#spreadsheetCostGrid').find('table').find('tr').eq(i).find('td').eq(3).text() != 0){
+															//if($('#spreadsheetCostGrid').find('table').find('tr').eq(i).find('td').eq(3).text().indexOf('.') != -1)	{
+															var numchange = parseFloat($('#spreadsheetCostGrid').find('table').find('tr').eq(i).find('td').eq(3).text().replace('$','').trim().replace(/,/g, ''));//.toFixed(2);										
+															if(numchange.toString().indexOf('.') != -1){
+																if(numchange.toString().split('.')[1].length >2){
+																numchange = parseFloat(numchange).toFixed(2);
+																}															
+														}
+														if(numchange != ''){
+																numchange = numchange.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+																}
+															$('#spreadsheetCostGrid').find('table').find('tr').eq(i).find('td').eq(3).html(numchange)
+															//}
+														}
+														
+														for(j=3;j<cols;j++)
+															{
+																if($('#spreadsheetCostGrid').find('table').find('tr').eq(i).find('td').eq(j).text() != '' && $('#spreadsheetCostGrid').find('table').find('tr').eq(i).find('td').eq(j).text() != '0' && $('#spreadsheetCostGrid').find('table').find('tr').eq(i).find('td').eq(j).text() != 0){
+																	//if($('#spreadsheetCostGrid').find('table').find('tr').eq(i).find('td').eq(3).text().indexOf('.') != -1)	{
+																	var numchange = parseFloat($('#spreadsheetCostGrid').find('table').find('tr').eq(i).find('td').eq(j).text().replace('$','').trim().replace(/,/g, ''));//.toFixed(2);										
+																	if(numchange.toString().indexOf('.') != -1){
+																		if(numchange.toString().split('.')[1].length >2){
+																			numchange = parseFloat(numchange).toFixed(2);
+																		}																	
+																}
+																if(numchange != ''){
+																numchange = numchange.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+																}
+															$('#spreadsheetCostGrid').find('table').find('tr').eq(i).find('td').eq(j).html(numchange)
+															//}
+														}
+													   }
+													}
+										//if(PeriodVarHighlight == 1){
+										/*for(j=4;j<cols;j++)
+											{
+												if($(instance).find('table').find('tr').eq(i).find('td').eq(2).text().trim()=="Forecast")
+													{
+														if(j != 21){
+															if($(instance).find('table').find('tr').eq(i).find('td').eq(j).text().replace('$','').trim().replace(/,/g, '').length > 16){
+																 $("#spanCostGridMessage").html("You have exceeded the maximum character length for this field. Please limit to 16 characters, including decimals.");
+																  $("#spanCostGridMessage").css('color','red')
+															}															
+														}															
+													}
+											} */
+											
+										}
+							if(x > 3 && y > 3 && (jExcelCostGrid.getRowData(y)[1] == 'Forecast' || jExcelCostGrid.getRowData(y)[1] == 'Actual') && (value != "" || value != null)){			
+								var valueDot = value.match(/\./g);
+								if(valueDot != null && valueDot.length > 1){									
+									$("#spanCostGridError").show();
+									
+								}
+							}
+                    },
+					//freezeColumns: 6,
+                    updateTable: function (el, cell, x, y, source, value, id) {
+						//setCellValue(cell, x, []);
+						
+						if($("input[title='Project Name']").length != 0){
+							$('#btnCategory').removeAttr('disabled');
+							$('#btnSave').removeAttr('disabled');
+							$('#ddlCategories').removeAttr('disabled');
+							$('#btnInsertCategory').removeAttr('disabled');
+							$('#forecastCheck').removeAttr('disabled');
+							$('#btnImport').removeAttr('disabled');
+							$('#btnExport').removeAttr('disabled');	
+							if(x>1){
+								if ($(cell).text().length > 0) {
+								   txt = $(cell).text().replace(' $ ', '').replace(/,/g , "").trim();
+								   //$(cell).html(' $ ' + txt);
+								}
+							}
+							
+							/*if(x==0 && y%2==0){
+								$(cell).css('background-color', '#edf3ff');
+							}*/
+							if(x>=2 && x<=3){
+								for(i=4;i<data.length;i=i+3){
+									 if (y==i) {
+										$(cell).css('background-color', 'rgba(211, 211, 211, 0.36)'); //background-color: rgba(211, 211, 211, 0.36);
+										//$(cell).css('background-color', '#d8ffff');
+									}
+								}
+								for(i=3;i<data.length;i=i+3){
+									 if (y==i) {
+										//$(cell).css('background-color', 'rgb(227 255 216');
+										$(cell).css('background-color', 'rgba(211, 211, 211, 0.36)'); 
+									}
+								}
+								for(i=5;i<data.length;i=i+3){
+									 if (y==i) {
+										//$(cell).css('background-color', '#edf3ff');
+										$(cell).css('background-color', 'rgba(211, 211, 211, 0.36)');    
+
+										
+									}
+								}
+							}
+							
+							
+							if(x==7 || x==11 || x==15 || x==19){
+								//$(cell).css('background-color', 'rgba(211, 211, 211, 0.36)');
+								//$(cell).addClass('readonly');
+							}
+							if(x==0 || x==1){
+								$(cell).css('background-color', 'white'); 
+								if(y==0 || y==1 || y==2){
+									$(cell).css('font-weight','normal');
+								}
+							}
+							if(x==2 || x==3){
+								$(cell).css('font-weight','bold');  // font-weight: bold;
+								//txt = $(cell).text().toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+								txt = $(cell).text().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+								$(cell).html(txt);
+							}
+							
+							if(x==2 || x==3 || x>3){
+								//$(cell).css('font-weight','bold');  // font-weight: bold;
+								//txt = $(cell).text().toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+								txt = $(cell).text().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+								if(txt == 0 || txt == '0'){
+								//txt = ''
+								}
+								if(txt != ''){
+									if(txt.indexOf('.') != -1){
+									var atxt =parseFloat(txt.trim().replace(/,/g, '')).toFixed(2)
+									
+									txt = atxt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+									}
+								}
+								$(cell).html(txt);
+							}
+							if(x!=0){
+								txt = $(cell).text().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+								$(cell).html(txt);
+							}
+							/*if(x>=4){
+								for(i=1;i<data.length;i=i+3){
+									if(y==i){
+										$(cell).addClass('readonly');
+									}
+								}
+								for(i=2;i<data.length;i=i+3){
+									if(y==i){
+										$(cell).addClass('readonly');
+									}
+								}
+							}*/
+							if(x==0){
+								$(cell).css('font-weight', 'bold');	
+							}
+							
+							if(y <4){
+								if(x>3){
+								$(cell).css('font-weight','bold');
+								}
+								
+							}
+							
+						}
+						else{
+							$(cell).addClass('readonly');
+							$(cell).css('color', '#09090961');
+							$('#btnCategory').attr('disabled','disabled');
+							$('#btnSave').attr('disabled','disabled');
+							$('#ddlCategories').attr('disabled','disabled');
+							$('#btnInsertCategory').attr('disabled','disabled');
+							//$('#forecastCheck').attr('disabled','disabled');
+							$('#btnImport').attr('disabled','disabled');
+							$('#btnExport').attr('disabled','disabled');
+							
+							$('.hidebtns').hide()
+							$('.hidelabel').hide()
+							
+							if(x>1){
+							$(cell).css('background-color', 'rgba(211, 211, 211, 0.36)');
+							//$(cell).css('color', 'black');
+							}
+							if(y <2){
+								if(x>3){
+								$(cell).css('font-weight','bold');
+								}
+								
+							}
+							if(x==0){
+								$(cell).css('font-weight', 'bold');	
+							}
+							
+							/*if(y >1){
+								if(x>3){
+								//$(cell).css('background-color', 'rgba(211, 211, 211, 0.36)');
+								$(cell).css('color', 'black');
+								}
+								
+							}*/
+							if(x==2 || x==3 || x>3){
+								$(cell).css('font-weight','bold');  // font-weight: bold;
+								//txt = $(cell).text().toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+								txt = $(cell).text().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+								if(txt == 0 || txt == '0'){
+								//txt = ''
+								}
+								if(txt != ''){
+									if(txt.indexOf('.') != -1){
+									var atxt =parseFloat(txt.trim().replace(/,/g, '')).toFixed(2)
+									
+									txt = atxt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+									}
+								}
+								$(cell).html(txt);
+							}
+							
+						
+						}
+					}
+						
+				
+                });
+		
+if($("input[title='Project Name']").length != 0){		
+$('#spreadsheetCostGrid').find('table').find('tr').find('td').eq(4).html('<a onclick="CallSummaryPrevYear()" style=" font-size: large;color: #7e7979;" >&laquo; </a>' + year + '<a onclick="CallSummaryNextYear()" style=" font-size: large; color: #7e7979;"> &raquo;</a><br>FY TOTAL')
+}
+else{
+	$('#spreadsheetCostGrid').find('table').find('tr').find('td').eq(4).html('<a onclick="CallSummaryPrevYearR()" style=" font-size: large;color: #7e7979;" >&laquo; </a>' + year + '<a onclick="CallSummaryNextYearR()" style=" font-size: large; color: #7e7979;"> &raquo;</a><br>FY TOTAL')
+}
+
+$('#spreadsheetCostGrid').find('table').find('tr').find('td').eq(3).html("LIFE TIME <br> TOTAL")
+//$($('#spreadsheetCostGrid').find('table').find('thead').find('tr')[1]).find('td').eq(4).html('<a onclick="CallSummaryPrevYear()" style=" font-size: large;color: black;" >&laquo; </a>' + year + '<a onclick="CallSummaryNextYear()" style=" font-size: large; color: black;"> &raquo;</a><br>FY TOTAL')
+//$($('#spreadsheetCostGrid').find('table').find('thead').find('tr')[1]).find('td').eq(3).html("MULTI YEAR <br> TOTAL")
+					
+                alignCostGridColumns();
+				jExcelCostGrid.hideIndex(0);
+				
+						
+				/*if(document.getElementById('forecastCheck').checked == false) {
+						hiderowJexcel();
+				}else{
+					
+				}*/
+				
+				$('#spreadsheetCostGrid').find('table').find('tbody').find('tr').each(function (index) {
+					
+				if($("input[title='Project Name']").length != 0){
+					//if(userInGroup){
+							console.log(index)
+						if(index > 1){	
+					var engid  = $(this).find('td').eq(1).html();				
+					//$(this).find('td').eq(1).html(engid+'<a role="button" style="margin-left: 15px;font-size: 15px" data-eid="'+engid+'" onclick="removeSelectedEngagements(\''+engid+"\',this"+');"  ><span style="color:red;"  class="fa fa-trash"></span></a>')
+					if(userInGroup != false  || userInGroupPM != false || userInGroupP != false){
+					$(this).find('td').eq(1).html('<a role="button" title="Delete category" style="margin-right: 15px;font-size: 15px" data-eid="'+engid+'" onclick="removeSelectedEngagements(\''+engid+"\',this"+');"  ><span style="color:#7c7070;"  class="fa fa-trash"></span></a>'+engid)
+					     }
+				  }
+					//}
+				}
+				if($(this).find('td').eq(2).text().trim()== "Budget"){
+					$(this).find('td:gt(2)').addClass("readonly");
+					$(this).find('td:gt(2)').css('background-color', 'rgba(211, 211, 211, 0.36)');
+					$(this).find('td').eq(2).html('Baseline')
+				}
+				if($(this).find('td').eq(2).text().trim()== "Actual"){
+					//$(this).css('display','none')
+				}
+				if($(this).find('td').eq(2).text().trim()== "Variance"){
+					$(this).find('td:gt(2)').addClass("readonly");
+					$(this).find('td:gt(2)').css('background-color', 'rgba(211, 211, 211, 0.36)');
+					console.log($(this).find('td').eq(2).text())
+					//$(this).find('td').eq(2).html('Actuals-Forecast')
+					$(this).find('td').eq(2).css('white-space', 'nowrap');	
+					//$(this).find('td').eq(2).removeClass('disabled');
+					//$('#spreadsheetCostGrid').find('table').find('tr').eq(index).find('td').eq(2).removeClass('disabled');
+					
+				}
+			
+			})
+			//hideQ()
+			//hiderowJexcelcheck();
+			//hideQbaseline()
+				//$('#spreadsheetCostGrid').jexcel('orderBy', 'CATEGORY')
+				 $("#btnSave").hide()
+				
+				if(userInGroup == false){
+					$("#btnCategory").hide();
+					$("#btnEditCategory").hide();
+				};
+			$('.ms-cui-tt-span').eq(1).click();	
+            }
+			
+			function removeSelectedEngagements(ValueD,Row){
+				var conmess = confirm('Deleting this category will remove all costs associated. Are you sure you want to delete this entry?')
+				if(conmess){
+				var Ye = $("#divYear").html();
+				var Category_UID = categories.filter(function (f) { return f['Category'] == ValueD })[0]['Category_UID']
+				//alert(Category_UID);
+				//alert(apiBaseUrl+"CostDetails/Delete/"+projectID+"/"+Category_UID+"/"+Ye);
+				debugger
+				if(Category_UID != null){
+				$.ajax({
+					       url: apiBaseUrl+"CostDetails/Deletev2/"+projectID+"/"+Category_UID+"/"+Ye,                        
+						  type: 'get',
+							contentType: 'application/json',
+							processData: false,
+							success: function (resp) {
+							// $.LoadingOverlay("hide");
+							 var Ye = $("#divYear").html();
+							 loadCostGrid(Ye);
+						 },
+						  error: function (err) {
+							//$.LoadingOverlay("hide");
+                         }
+                     });
+				}
+				}
+			}
+			function hideQ(){
+				if($('#QuarterCheck').is(":checked")){
+					jExcelCostGrid.showColumn(7)
+					jExcelCostGrid.showColumn(11)
+					jExcelCostGrid.showColumn(15)
+					jExcelCostGrid.showColumn(19)
+				}else{
+					jExcelCostGrid.hideColumn(7)
+					jExcelCostGrid.hideColumn(11)
+					jExcelCostGrid.hideColumn(15)
+					jExcelCostGrid.hideColumn(19)
+				}
+				
+				hiderowJexcel();
+			//	hiderowJexcelActual();
+				
+				//	jExcelCostGrid.hideColumn(7)
+			//jExcelCostGrid.hideColumn(11)	
+			}
+
+            function getCostGridColumnsdup(year) {
+                var headerColumns = [
+                    {
+                        type: 'text',
+                        width: '200',
+                        title: 'CATEGORY',
+                        align: 'left',
+                        wordWrap: true,
+                        readOnly: true
+                    },
+                    {
+                        type: 'text',
+                        width: '100',
+                        title: 'VALUE TYPE',
+                        align: 'left',
+                        wordWrap: true,
+                        readOnly: true
+                    },
+                    {
+                        type: 'text',
+                        width: '100',
+                        title: 'MULTI YEAR TOTAL',
+                        align: 'right',
+                        //wordWrap: true,
+                        readOnly: true,
+						mask:'#,##,00', decimal:','
+
+                    },
+                    {
+                        type: 'text',
+                        width: '90',
+                        title: 'FY TOTAL',
+                        align: 'right',
+                        wordWrap: true,
+                        readOnly: true,
+						mask:'#,##,00', decimal:',' 						
+
+                    },
+                ];
+
+                var months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+               /* for (var i = 0; i < 12; i++) {
+					if(i==3){
+						headerColumns.push(
+								{
+									type: 'number',
+									width: '90',
+									title:'Q1',
+									align: 'right',
+									wordWrap: true
+								}
+							);
+					}
+					if(i==6){
+						headerColumns.push(
+								{
+									type: 'number',
+									width: '90',
+									title: 'Q2',
+									align: 'right',
+									wordWrap: true
+								}
+							);
+					}
+					if(i==9){
+						headerColumns.push(
+								{
+									type: 'number',
+									width: '90',
+									title: 'Q3',
+									align: 'right',
+									wordWrap: true
+								}
+							);
+					}
+                    headerColumns.push(
+                        {
+                            type: 'number',
+                            width: '90',
+                            title: months[i] + ' ' + year,
+                            align: 'right',
+                            wordWrap: true
+							//mask:'#,##,00', decimal:',' 
+                        }
+                    );
+					if(i==11){
+						headerColumns.push(
+								{
+									type: 'number',
+									width: '90',
+									title: 'Q4',
+									align: 'right',
+									wordWrap: true
+								}
+							);
+					}
+                }*/
+				 for (var i = 0; i < 12; i++) {
+
+                    headerColumns.push(
+                        {
+                            type: 'number',
+                            width: '90',
+                            title: months[i] + ' ' + year,
+                            align: 'right',
+                            wordWrap: true
+							//mask:'#,##,00', decimal:',' 
+                        }
+                    );
+                }
+                return headerColumns;
+            }
+
+            /*function alignColumns() {
+                setTimeout(function () {
+                    for (var i = 4; i < jExcelCostGrid.colgroup.length; i++) {
+                        debugger;
+                        var cellValue = jExcelCostGrid.getValueFromCoords(i, 0);
+                        if (cellValue.toString().length > 9) {
+                            jExcelCostGrid.setWidth(i, cellValue.toString().length * 10.5);
+                        }
+                        else {
+                            jExcelCostGrid.setWidth(i, 8 * 10.5);
+                        }
+                    }
+                    for (var i = 1; i < 4; i++) {
+                        var colData = jExcelCostGrid.getColumnData(i);
+                        colData.shift();
+                        var longest = colData.sort(function (a, b) { return b.length - a.length; })[0];
+                        if (longest.toString().length > 9) {
+                            jExcelCostGrid.setWidth(i, longest.toString().length * 10.5);
+                        }
+                        else {
+                            jExcelCostGrid.setWidth(i, 8 * 10.5);
+                        }
+
+                    }
+                }, 20);
+            }*/
+
+            function formatCostGridJExcel() {
+                var serviceId = "";
+                for (var i = 0; i < CostJExcelData.length; i++) {
+                    if (serviceId != CostJExcelData[i][0]) {
+                        var currOCuur = i + 1;
+                        serviceId = CostJExcelData[i][0];
+                        var filter = _.map(CostJExcelData, function (o) {
+                            if (o[0] == serviceId) return o;
+                        });
+                        filter = _.without(filter, undefined);
+                        if (filter.length > 1)
+                            jExcelCostGrid.setMerge("A" + currOCuur, 0, filter.length);
+                    }
+                    if (CostJExcelData[i][0] == 'Total') {
+                        $('td[data-y="' + i + '"]').addClass('readonly disabled');
+						
+                    }
+
+                    if (CostJExcelData[i][1] == 'Forecast') {
+                        $('td[data-y="' + i + '"]').parent().addClass('bold');
+                    }
+                }
+
+            }
+			
+       
+
+        function onfileUpload() {
+            var x = document.getElementById("fileUploadTemplate");
+            var txt = "";
+            if ('files' in x) {
+                if (x.files.length == 0) {
+                    txt = "Select file.";
+                } else {
+                    for (var i = 0; i < x.files.length; i++) {
+                        txt += "<br><strong>" + (i + 1) + ". file</strong><br>";
+                        var file = x.files[i];
+                        if ('name' in file) {
+                            txt += "name: " + file.name + "<br>";
+                        }
+                        if ('size' in file) {
+                            txt += "size: " + file.size + " bytes <br>";
+                        }
+                    }
+                }
+            }
+            else {
+                if (x.value == "") {
+                    txt += "Select file.";
+                } else {
+                    txt += "The property is not supported by your browser!";
+                    txt += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead.
+                }
+            }
+            document.getElementById("spanImportMessages").innerHTML = txt;
+        }
+		
+		 /*$("#forecastCheck").on('change', function(){
+		   alert("Works");
+		 })*/
+		var Jxcel_data;
+		var Jxcel_year;
+		const checkbox = document.getElementById('forecastCheck')
+		//checkbox.addEventListener('change', (event) => {
+		$("#forecastCheckcopya").on("change", function() {
+			  //if (event.currentTarget.checked) {
+				  
+				  	hiderowJexcel();
+			if($('#forecastCheck').is(":checked")){
+			//	hiderowJexcel();
+				/*var ln = Jxcel_data.length
+				var arr = Jxcel_data
+				var filter_arr=[]
+				for(i=0;i<ln;i++){
+					filter_arr.push(arr[i])
+					if(arr[i][1]=="Budget"){
+						filter_arr.pop(arr[i])
+					}
+				}
+				
+				
+				$("#spreadsheetCostGrid").html('');
+                jExcelCostGrid = jexcel(document.getElementById('spreadsheetCostGrid'), {
+                    data: filter_arr,
+                    columns: getCostGridColumns(Jxcel_year),
+					csvFileName:'Cost Grid '+$("#divYear").html()+'',
+                   // csvHeaders: true,
+					includeHeadersOnDownload:true,	
+                    // tableOverflow: true,
+                    allowInsertRow: false,
+                    allowManualInsertRow: false,
+                    allowInsertColumn: false,
+                    allowManualInsertColumn: false,
+                    allowDeleteRow: false,
+                    allowDeleteColumn: false,
+                    copyCompatibility: true,
+                    //tableWidth:  '900px',
+                    //tableHeight: 'calc(105%)',// $(window).height() - 200 + 'px',
+                    contextMenu: function () { return false; },
+                    onchange: function (instance, cell, x, y, value) {
+						var iColIndex= $(cell).closest("tr td").prevAll("tr td").length;
+                    //    if (x > 0 && value.length > 9) {
+                    //        var newWidth = value.length * 10.5;
+                    //        jExcelCostGrid.setWidth(x, newWidth);
+                    //    }
+                    //    var td = $(cell);
+                    //    if (!td.hasClass('readonly')) {
+                    //        var newX = x - 1;
+                    //        var newTdHeader = $('td[data-column="' + newX + '"]');
+                    //        if (newTdHeader.html() == 'Lock In') {
+                    //            //$('td[data-x="' + newX + '"][data-y="' + y + '"]').html(value);
+                    //            jExcelCostGrid.setValueFromCoords(newX, y, value, true);
+
+                    //        }
+                    //    }
+						if(iColIndex>=4){
+								alignCostGridColumns(iColIndex-1)
+							}
+                    },
+                    updateTable: function (el, cell, x, y, source, value, id) {
+                    //    if (x > 3) {
+                    //        txt = $(cell).text().replace(' $ ', '');
+                    //        $(cell).html(' $ ' + txt);
+                    //    }
+						if(x>=1){
+							for(i=1;i<filter_arr.length;i=i+2){
+								 if (y==i) {
+									$(cell).css('background-color', '#edf3ff');
+								}
+							}
+							for(i=0;i<filter_arr.length;i=i+2){
+								 if (y==i) {
+									//$(cell).css('background-color', '#d3d3d35c');
+								}
+							}
+							for(i=2;i<filter_arr.length;i=i+2){
+								 if (y==i) {
+									//$(cell).css('background-color', '#edf3ff');
+								}
+							}
+						}
+					
+                    }
+						
+
+                });
+                jExcelCostGrid.hideIndex(0);
+				alignCostGridColumns();
+				//$('#btnSave').hide()
+				document.getElementById("btnSave").disabled = true;
+				document.getElementById("btnCategory").disabled = true;
+				//document.getElementById("btnPrevious").disabled = true;
+				//document.getElementById("btnNext").disabled = true;
+				document.getElementById("btnInsertCategory").disabled = true;
+				formatCostGridJExcel()
+				
+				function formatCostGridJExcel() {
+                var serviceId = "";
+                for (var i = 0; i < filter_arr.length; i++) {
+                    if (serviceId != filter_arr[i][0]) {
+                        var currOCuur = i + 1;
+                        serviceId = filter_arr[i][0];
+                        var filter = _.map(filter_arr, function (o) {
+                            if (o[0] == serviceId) return o;
+                        });
+                        filter = _.without(filter, undefined);
+                        if (filter.length > 1)
+                            jExcelCostGrid.setMerge("A" + currOCuur, 0, filter.length);
+                    }
+                    if (filter_arr[i][0] == 'Total') {
+                        $('td[data-y="' + i + '"]').addClass('readonly disabled');
+						
+                    }
+
+                    if (filter_arr[i][1] == 'Forecast') {
+                        $('td[data-y="' + i + '"]').parent().addClass('bold');
+                    }
+                }
+
+            }*/
+				
+				
+			  } else {
+				 // loadCostGrid(currentYear);
+				 /* if($('#forecastCheck').is(":checked")){
+				  for(j=1;j<=Jxcel_data.length;j=j+3){
+					for(i=1;i<=19;i++){ 
+					 $('#spreadsheetCostGrid').find('td[data-x='+i+']').eq(j).show();
+					}*/
+				//}
+				//alert('not checked');
+				/*for(j=2;j<=rowCount;j=j+3){
+					for(i=1;i<=15;i++){ 
+					 $('#spreadsheetCostGrid').find('td[data-x='+i+']').eq(j).show();
+					}
+				}
+				document.getElementById("btnSave").disabled = false;
+				document.getElementById("btnCategory").disabled = false;
+				//document.getElementById("btnPrevious").disabled = false;
+				//document.getElementById("btnNext").disabled = false;
+				document.getElementById("btnInsertCategory").disabled = false;
+				//$('#btnSave').show()
+				$("#spreadsheetCostGrid").html('');
+				//ready()
+				*/
+			  }
+		});
+                
+			function exportTableToExcel(){
+				document.getElementById('spreadsheetCostGrid').jexcel.download();
+				}
+			function getCostGridColumns(year) {
+                var headerColumns = [
+                    {
+                        type: 'text',
+                        width: '200',
+                        title: 'CATEGORY',
+                        align: 'left',
+                        wordWrap: true,
+                        readOnly: true
+                    },
+                    {
+                        type: 'text',
+                        width: '100',
+                        title: 'TYPE',
+                        align: 'left',
+                        wordWrap: true,
+                        readOnly: true
+                    },
+                    {
+                        type: 'text',
+                        width: '100',
+                        title: 'MULTI YEAR TOTAL',
+                        align: 'right',
+                        wordWrap: true,
+                        readOnly: true,
+					//	mask:'#,##,00', decimal:',',
+						font: 'Verdana,Arial,sans-serif'						
+
+                    },
+                    {
+                        type: 'text',
+                        width: '90',
+                        title: 'FY TOTAL',
+                        align: 'right',
+                        wordWrap: true,
+                        readOnly: true,
+						//mask:'#,##,00', decimal:',' 						
+
+                    },
+                ];
+
+
+ var months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+                for (var i = 0; i < 12; i++) {
+
+                    headerColumns.push(
+                        {
+                            type: 'number',
+                            width: '80',
+                          //  title: months[i] + ' ' + year,
+						  title: months[i] + ' ' + (year),
+                            align: 'right',
+                            wordWrap: true
+							
+                        }
+                    );
+                }
+				
+			/*	headerColumns.push(
+								{
+									type: 'number',
+									width: '90',
+									title:"FY"+ (year.toString().slice(-2))+' Q1',
+									align: 'right',
+									wordWrap: true
+								}
+							);
+			 for (var i = 0; i < 9; i++) {
+					if(i==3){
+						headerColumns.push(
+								{
+									type: 'number',
+									width: '90',
+									title: "FY"+ (year.toString().slice(-2))+' Q2',
+									align: 'right',
+									wordWrap: true
+								}
+							);
+					}
+					if(i==6){
+						headerColumns.push(
+								{
+									type: 'number',
+									width: '90',
+									title:"FY"+ (year.toString().slice(-2))+' Q3',
+									align: 'right',
+									wordWrap: true
+								}
+							);
+					}
+                    headerColumns.push(
+                        {
+                            type: 'number',
+                            width: '80',
+                            title: months[i] + ' ' + (year),
+					  // title: months[i] + ' ' + (year),
+                            align: 'right',
+                            wordWrap: true
+							//mask:'#,##,00', decimal:',' 
+                        }
+                    );
+					if(i==8){
+						headerColumns.push(
+								{
+									type: 'number',
+									width: '90',
+									title: "FY"+ (year.toString().slice(-2))+' Q4',
+									align: 'right',
+									wordWrap: true
+								}
+							);
+					}
+                }*/
+                return headerColumns;
+
+
+              /*  var months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+                /*for (var i = 0; i < 12; i++) {
+
+                    headerColumns.push(
+                        {
+                            type: 'number',
+                            width: '90',
+                            title: months[i] + ' ' + year,
+                            align: 'right',
+                            wordWrap: true
+							//mask:'#,##,00', decimal:',' 
+                        }
+                    );
+                }*/
+				/*for (var i = 0; i < 12; i++) {
+					if(i==3){
+						headerColumns.push(
+								{
+									type: 'number',
+									width: '90',
+									title:'Q1-' + year,
+									align: 'right',
+									wordWrap: true
+								}
+							);
+					}
+					if(i==6){
+						headerColumns.push(
+								{
+									type: 'number',
+									width: '90',
+									title: 'Q2-' + year,
+									align: 'right',
+									wordWrap: true
+								}
+							);
+					}
+					if(i==9){
+						headerColumns.push(
+								{
+									type: 'number',
+									width: '90',
+									title: 'Q3-' + year,
+									align: 'right',
+									wordWrap: true
+								}
+							);
+					}
+                    headerColumns.push(
+                        {
+                            type: 'number',
+                            width: '90',
+                            title: months[i] + ' ' + year,
+                            align: 'right',
+                            wordWrap: true
+							//mask:'#,##,00', decimal:',' 
+                        }
+                    );
+					if(i==11){
+						headerColumns.push(
+								{
+									type: 'number',
+									width: '90',
+									title: 'Q4-' + year,
+									align: 'right',
+									wordWrap: true
+								}
+							);
+					}
+                }
+                return headerColumns;*/
+            }
+			/*function formatCostGridJExcel() {
+                var serviceId = "";
+                for (var i = 0; i < CostJExcelData.length; i++) {
+                    if (serviceId != CostJExcelData[i][0]) {
+                        var currOCuur = i + 1;
+                        serviceId = CostJExcelData[i][0];loadCostGrid(year, Jxcel_data);
+                        var filter = _.map(CostJExcelData, function (o) {
+                            if (o[0] == serviceId) return o;
+                        });
+                        filter = _.without(filter, undefined);
+                        if (filter.length > 1)
+                            jExcelCostGrid.setMerge("A" + currOCuur, 0, filter.length);
+                    }
+                    if (CostJExcelData[i][0] == 'Total') {
+                        $('td[data-y="' + i + '"]').addClass('readonly disabled');
+						
+                    }
+
+                    if (CostJExcelData[i][1] == 'Forecast') {
+                        $('td[data-y="' + i + '"]').parent().addClass('bold');
+                    }
+                }
+
+            }*/
+			$("#btnNext").click(function () {
+                var year = parseInt($("#divYear").html()) + 1;
+                loadCostGrid(year, Jxcel_data);
+			})
+			/*var nextYer = false
+			function CallSummaryNextYear(){
+				 var year = parseInt($("#divYear").html()) + 1;
+                loadCostGrid(year, Jxcel_data);
+			}*/
+			
+			var nextYer = false
+			
+			function CallSummaryNextYear(){
+				nextYer = true
+				 //year = parseInt($("#divYear").html()) + 1;
+				 $("#btnSave").click()
+				 
+                //loadCostGrid(year, Jxcel_data);
+			}
+			
+			function CallSummaryNextYearR(){
+				var year = parseInt($("#divYear").html()) + 1;
+				 loadCostGrid(year, Jxcel_data);
+			}
+			
+			function alignCostGridColumns(colNumber) {
+				if(!colNumber) {
+					//alignColumn(jExcelProValuCannibalGrid, 6)
+					for(var i=0;i<=20; i++) {
+						//alignColumn(jExcelCostGrid, i)
+					}
+				} else {
+					//alignColumn(jExcelCostGrid, colNumber)
+				}
+			}
+			
+			function alignColumn(tblJExcel, colNumber) {
+				var year  = parseInt($("#divYear").html()); 
+				if(colNumber==3 || colNumber==2){
+					var cell = colNumber + 2;
+					var firstCells = document.querySelectorAll('td:nth-child('+cell+')');
+					var cellValues = [];
+					//if ('firstCells' in window && !firstCells.prototype.forEach) {
+						//firstCells.prototype.forEach(function(singleCell) {
+						Array.prototype.forEach.call(firstCells, function (singleCell) {
+						  cellValues.push(singleCell.innerText);
+							//if(singleCell.innerText== "MULTI YEAR\r\nTOTAL" || singleCell.innerText== "« "+year+" »\r\nFY TOTAL"){
+							if(singleCell.innerText.indexOf("MULTI YEAR")!= -1 || singleCell.innerText.indexOf("FY TOTAL")!= -1 ){
+								cellValues.pop(singleCell.innerText);
+							}
+						});
+					//}
+					console.log(cellValues);
+					var longest = cellValues.sort(function (a, b) { return b.toString().length - a.toString().length; })[0];
+					if(longest !== undefined) {
+					var _long = parseFloat(longest.replace("$", "").replace(/,/g , "").trim());
+					_long = _long.toFixed(2)
+					if (_long.toString().length > 8) {
+							tblJExcel.setWidth(colNumber, (_long.toString().length+2) * 10.5);
+						}					
+					}
+				}
+				
+				if(colNumber>=4){
+					var colData = tblJExcel.getColumnData(colNumber);
+					var filColData = colData.filter(function (e) { return e != undefined && e != null && e != ""});
+					filColData.shift();
+					filColData.shift();		
+					filColData.shift();	
+					if (filColData.length > 0) {
+						var longest = filColData.sort(function (a, b) { return b.toString().length - a.toString().length; })[0];
+						if(!isNaN(longest)) {
+							longest = parseFloat(longest)
+							longest = longest.toFixed(2)
+						}
+						if (longest.toString().length > 8) {
+							tblJExcel.setWidth(colNumber, longest.toString().length * 10.5);
+						}
+					}
+				}
+			}
+			function hiderowJexcel(){
+				//var rowCount = $("#spreadsheetCostGrid tr").length
+				//alert('checked');
+				
+				
+				
+				
+				 if($('#forecastCheck').is(":checked")){
+					  for(j=1;j<=Jxcel_data.length;j=j+2){
+						for(i=1;i<=19;i++){ 
+						 $('#spreadsheetCostGrid').find('td[data-x='+i+']').eq(j).show();
+						}
+					  }
+				 }
+				  else{
+					  for(j=1;j<=Jxcel_data.length;j=j+2){
+							for(i=1;i<=19;i++){ 
+							 $('#spreadsheetCostGrid').find('td[data-x='+i+']').eq(j).hide();
+							}
+						}
+				  }
+			}
+			
+			function hideQbaseline(){
+			
+			
+			hiderowJexcelcheck('1')
+										//hideQ()
+						 
+			}
+			
+			function hiderowJexcelcheck(dsa){
+				//var rowCount = $("#spreadsheetCostGrid tr").length
+				//alert('checked');
+				/*jExcelCostGrid.showColumn(7)
+					jExcelCostGrid.showColumn(11)
+					jExcelCostGrid.showColumn(15)
+					jExcelCostGrid.showColumn(19)*/
+				
+				
+				
+				 if($('#forecastCheck').is(":checked")){
+					  for(j=1;j<=Jxcel_data.length;j=j+2){
+						for(i=1;i<=19;i++){ 
+						 $('#spreadsheetCostGrid').find('td[data-x='+i+']').eq(j).show();
+						}
+					  }
+					  //hideQ()
+					  if($('#QuarterCheck').is(":checked")){
+							jExcelCostGrid.showColumn(7)
+							jExcelCostGrid.showColumn(11)
+							jExcelCostGrid.showColumn(15)
+							jExcelCostGrid.showColumn(19)
+							
+							$('#spreadsheetCostGrid').find('table').find('thead').find('tr').each(function (index) {
+													$(this).find('td:gt(0)').css('border-right-width', '2px');
+											});
+						}else{
+							jExcelCostGrid.hideColumn(7)
+							jExcelCostGrid.hideColumn(11)
+							jExcelCostGrid.hideColumn(15)
+							jExcelCostGrid.hideColumn(19)
+						}
+				 }
+				  else{
+					// 
+					   $('#spreadsheetCostGrid').find('table').find('thead').find('tr').each(function (index) {
+									$(this).find('td:gt(2)').css('border-width', '1px');
+							});
+					 
+						
+						if($('#forecastCheck').is(":checked") == false && $('#QuarterCheck').is(":checked") == false){
+							 if(dsa != '1'){
+									if($('#QuarterCheck').is(":checked")){
+									jExcelCostGrid.showColumn(7)
+									jExcelCostGrid.showColumn(11)
+									jExcelCostGrid.showColumn(15)
+									jExcelCostGrid.showColumn(19)
+								}else{
+									jExcelCostGrid.hideColumn(7)
+									jExcelCostGrid.hideColumn(11)
+									jExcelCostGrid.hideColumn(15)
+									jExcelCostGrid.hideColumn(19)
+								}
+							 }else{
+								  if($('#QuarterCheck').is(":checked")){
+										jExcelCostGrid.showColumn(7)
+										jExcelCostGrid.showColumn(11)
+										jExcelCostGrid.showColumn(15)
+										jExcelCostGrid.showColumn(19)
+										
+									}else{
+										jExcelCostGrid.hideColumn(7)
+										jExcelCostGrid.hideColumn(11)
+										jExcelCostGrid.hideColumn(15)
+										jExcelCostGrid.hideColumn(19)
+									}
+							 }
+						}
+						else if($('#forecastCheck').is(":checked") == false && $('#QuarterCheck').is(":checked") == true){
+							 if(dsa != '1'){
+									if($('#QuarterCheck').is(":checked")){
+									jExcelCostGrid.showColumn(7)
+									jExcelCostGrid.showColumn(11)
+									jExcelCostGrid.showColumn(15)
+									jExcelCostGrid.showColumn(19)
+									
+								}else{
+									jExcelCostGrid.hideColumn(7)
+									jExcelCostGrid.hideColumn(11)
+									jExcelCostGrid.hideColumn(15)
+									jExcelCostGrid.hideColumn(19)
+									 
+								}
+								
+							 }else{
+								  if($('#QuarterCheck').is(":checked")){										
+										
+										jExcelCostGrid.showColumn(7)
+										jExcelCostGrid.showColumn(11)
+										jExcelCostGrid.showColumn(15)
+										jExcelCostGrid.showColumn(19)
+										
+										
+									}else{
+										jExcelCostGrid.hideColumn(7)
+										jExcelCostGrid.hideColumn(11)
+										jExcelCostGrid.hideColumn(15)
+										jExcelCostGrid.hideColumn(19)
+									}
+									$('#spreadsheetCostGrid').find('table').find('thead').find('tr').each(function (index) {
+												$(this).find('td:gt(0)').css('border-right-width', '2px');
+										});
+							 }
+							 
+							
+						}
+						
+						else{
+							if($('#QuarterCheck').is(":checked")){
+										jExcelCostGrid.showColumn(7)
+										jExcelCostGrid.showColumn(11)
+										jExcelCostGrid.showColumn(15)
+										jExcelCostGrid.showColumn(19)
+										
+									}else{
+										jExcelCostGrid.hideColumn(7)
+										jExcelCostGrid.hideColumn(11)
+										jExcelCostGrid.hideColumn(15)
+										jExcelCostGrid.hideColumn(19)
+									}
+						}
+					 // }
+					  for(j=1;j<=Jxcel_data.length;j=j+2){
+							for(i=1;i<=19;i++){ 
+							// $('#spreadsheetCostGrid').find('td[data-x='+i+']').eq(j).hide();
+							}
+						}
+						
+						
+						
+						//hideQ()
+				  }
+				  
+					
+				  
+			}
+			function hiderowJexcelActual(){
+				//var rowCount = $("#spreadsheetCostGrid tr").length
+				//alert('checked');
+				for(j=3;j<=Jxcel_data.length;j=j+3){
+					for(i=1;i<=19;i++){ 
+					 $('#spreadsheetCostGrid').find('td[data-x='+i+']').eq(j).hide();
+					}
+				}
+			}
+			
+				$(document).on("paste keypress", "#spreadsheetCostGrid tr td:not(:first)", function (e) {
+					var val =  $(this).find('textarea').val();//$(this).val();
+					/* dotcount = val.match(/\./g);
+					if(dotcount.length > 1){
+						 val = val.replace('.','')
+					}
+					 */
+					ggriddatachngae =true;
+					var colIndex = $(this).parent().children().index($(this));
+					var charCode = (e.which) ? e.which : event.keyCode;
+					if(colIndex >2){
+						if (charCode != 45 && charCode != 46){
+							if (charCode > 31 && (charCode < 48 || charCode > 57)) {  
+								return false;
+								event.preventDefault();
+							}
+						}
+					}
+			  });
+			  
+			  
+						
+			
+			function setCellValue(cell, col, exCols) {
+				var txt = parseFloat($(cell).text().replace(/,/gi, '')).toFixed(2);
+				if (!isNaN(txt) && col > 0 && exCols.filter(function (f) { return f == col; }).length == 0) {
+					var txtFormat = numberWithCommas(txt);
+					$(cell).html(txtFormat);
+				}
+			}
+			function numberWithCommas(x) {
+				//return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+				return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+			}
+			/* $(document).on("paste keypress", "#spreadsheetCostGrid tr td:not(:first)", function (e) {
+				//alert("pressed")
+				//var charCode = (e.which) ? e.which : event.keyCode;
+				var val =  $(this).find('textarea').val();//$(this).val();
+				var colIndex = $(this).parent().children().index($(this));
+				var charCode = (e.which) ? e.which : event.keyCode;
+				if(colIndex > 4){
+					if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57)) {
+						return false;
+						event.preventDefault();
+					}
+					if (charCode == 46) {
+						//dotArr.push("entered")
+						//return false;
+					}
+				}
+			}); */
+    </script>
